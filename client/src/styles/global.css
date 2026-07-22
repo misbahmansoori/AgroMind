@@ -17,11 +17,16 @@
   --radius: 18px;
 }
 
+html {
+  scroll-behavior: smooth;
+}
 
 body {
   font-family: "Inter", sans-serif;
   background: var(--background);
   color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 h1,
@@ -31,4 +36,76 @@ h4,
 h5,
 h6 {
   font-family: "Manrope", sans-serif;
+}
+
+::selection {
+  background: #c8e6c9;
+  color: #1b5e20;
+}
+
+/* Soft field grain for depth */
+.page-atmosphere {
+  background-image:
+    radial-gradient(ellipse at top, rgba(46, 125, 50, 0.06), transparent 55%),
+    radial-gradient(ellipse at bottom right, rgba(165, 214, 167, 0.12), transparent 45%);
+}
+
+@keyframes pulse-dot {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.45;
+    transform: scale(0.85);
+  }
+}
+
+.live-dot {
+  animation: pulse-dot 1.6s ease-in-out infinite;
+}
+
+@keyframes scan-sweep {
+  0% {
+    top: 0%;
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    top: 100%;
+    opacity: 0;
+  }
+}
+
+.scan-line {
+  animation: scan-sweep 1.4s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.shimmer-text {
+  background: linear-gradient(
+    90deg,
+    #1b5e20 0%,
+    #66bb6a 40%,
+    #1b5e20 80%
+  );
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: shimmer 2.2s linear infinite;
 }

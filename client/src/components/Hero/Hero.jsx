@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
+import { Link } from "react-router-dom";
 
 import Container from "../common/Container";
 import Button from "../common/Button";
@@ -75,10 +76,12 @@ const Hero = () => {
             animate="visible"
             className="mt-10 flex flex-wrap items-center gap-4"
           >
-            <Button className="flex items-center gap-2 px-7 py-4">
-              Start Diagnosis
-              <ArrowRight size={18} />
-            </Button>
+            <Link to="/detect">
+              <Button className="flex items-center gap-2 px-7 py-4">
+                Start Diagnosis
+                <ArrowRight size={18} />
+              </Button>
+            </Link>
 
             <button
               type="button"
