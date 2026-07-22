@@ -37,7 +37,7 @@ const CTA = () => {
               to="/auth"
               className="mt-10 inline-flex items-center gap-2 rounded-xl bg-white px-8 py-4 font-semibold text-green-800 shadow-lg transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#eaf5ea] hover:shadow-xl"
             >
-              Start Diagnosis
+              Get Started
               <ArrowRight size={18} />
             </Link>
           </div>

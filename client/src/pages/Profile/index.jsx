@@ -1,7 +1,162 @@
-import React from 'react';
+import { Link } from "react-router-dom";
+import {
+  User,
+  Mail,
+  Phone,
+  MapPin,
+  Languages,
+  Sprout,
+  ArrowLeft,
+  LogOut,
+  Pencil,
+} from "lucide-react";
+import { motion } from "framer-motion";
 
-function Profile() {
-    return ( <h1>Profile</h1> );
-}
+import Container from "../../components/common/Container";
+import Button from "../../components/common/Button";
+
+// Mock profile — replace with logged-in user from Auth/API later
+const profile = {
+  name: "Ramesh Patil",
+  email: "ramesh.farmer@email.com",
+  phone: "+91 98765 43210",
+  language: "Hindi · English",
+  location: "Nashik, Maharashtra",
+  farmName: "Green Valley Farm",
+  crops: "Tomato, Chili, Cotton",
+  farmSize: "4.5 acres",
+};
+
+const infoRows = [
+  { icon: Mail, label: "Email", value: profile.email },
+  { icon: Phone, label: "Phone", value: profile.phone },
+  { icon: Languages, label: "Language", value: profile.language },
+  { icon: MapPin, label: "Location", value: profile.location },
+];
+
+const farmRows = [
+  { icon: Sprout, label: "Farm Name", value: profile.farmName },
+  { icon: Sprout, label: "Crops", value: profile.crops },
+  { icon: MapPin, label: "Farm Size", value: profile.farmSize },
+];
+
+const Profile = () => {
+  return (
+    <section className="page-atmosphere relative min-h-screen overflow-hidden pb-16 pt-32">
+      <div className="pointer-events-none absolute -right-16 top-28 h-64 w-64 rounded-full bg-green-200/30 blur-3xl" />
+
+      <Container className="relative">
+        <Link
+          to="/dashboard"
+          className="inline-flex items-center gap-2 text-sm font-medium text-gray-600 transition-colors hover:text-green-700"
+        >
+          <ArrowLeft size={16} />
+          Back to Dashboard
+        </Link>
+
+        <motion.div
+          initial={{ opacity: 0, y: 18 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="mt-6 grid gap-6 lg:grid-cols-12"
+        >
+          {/* Identity card */}
+          <div className="rounded-[28px] border border-[#dce8dc] bg-white p-6 shadow-[0_12px_36px_rgba(15,40,20,0.05)] lg:col-span-4">
+            <div className="flex flex-col items-center text-center">
+              <div className="flex h-24 w-24 items-center justify-center rounded-full bg-[#eaf5ea] text-green-700">
+                <User size={40} strokeWidth={1.6} />
+              </div>
+              <h1 className="mt-4 font-[Manrope] text-2xl font-extrabold text-gray-900">
+                {profile.name}
+              </h1>
+              <p className="mt-1 text-sm text-gray-500">{profile.farmName}</p>
+              <span className="mt-4 rounded-lg bg-[#eaf5ea] px-3 py-1 text-xs font-semibold text-green-700">
+                Guest preview · Auth coming soon
+              </span>
+            </div>
+
+            <div className="mt-8 space-y-3">
+              <Button className="w-full" variant="secondary">
+                <Pencil size={16} />
+                Edit Profile
+              </Button>
+              <Link to="/auth" className="block">
+                <Button className="w-full" variant="ghost">
+                  <LogOut size={16} />
+                  Sign Out
+                </Button>
+              </Link>
+            </div>
+          </div>
+
+          {/* Details */}
+          <div className="space-y-6 lg:col-span-8">
+            <div className="rounded-[28px] border border-[#dce8dc] bg-white p-6 shadow-[0_12px_36px_rgba(15,40,20,0.05)]">
+              <h2 className="font-[Manrope] text-lg font-bold text-gray-900">
+                Personal Information
+              </h2>
+              <div className="mt-5 grid gap-4 sm:grid-cols-2">
+                {infoRows.map((row) => {
+                  const Icon = row.icon;
+                  return (
+                    <div
+                      key={row.label}
+                      className="rounded-2xl border border-[#e8f0e8] bg-[#f7faf7] p-4"
+                    >
+                      <div className="flex items-center gap-2 text-xs font-medium text-gray-500">
+                        <Icon size={14} className="text-green-700" />
+                        {row.label}
+                      </div>
+                      <p className="mt-2 font-semibold text-gray-900">
+                        {row.value}
+                      </p>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div className="rounded-[28px] border border-[#dce8dc] bg-white p-6 shadow-[0_12px_36px_rgba(15,40,20,0.05)]">
+              <h2 className="font-[Manrope] text-lg font-bold text-gray-900">
+                Farm Details
+              </h2>
+              <div className="mt-5 grid gap-4 sm:grid-cols-3">
+                {farmRows.map((row) => {
+                  const Icon = row.icon;
+                  return (
+                    <div
+                      key={row.label}
+                      className="rounded-2xl border border-[#e8f0e8] bg-[#f7faf7] p-4"
+                    >
+                      <div className="flex items-center gap-2 text-xs font-medium text-gray-500">
+                        <Icon size={14} className="text-green-700" />
+                        {row.label}
+                      </div>
+                      <p className="mt-2 font-semibold text-gray-900">
+                        {row.value}
+                      </p>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div className="rounded-[28px] border border-dashed border-green-300 bg-[#f4faf4] p-5 text-sm leading-7 text-gray-600">
+              <p className="font-[Manrope] font-bold text-green-800">
+                How login will work later
+              </p>
+              <p className="mt-1">
+                Right now Dashboard, Detect, Result, and Profile are open for
+                demo. After your teammate finishes Auth, these pages will require
+                login first — then this profile will show the real logged-in
+                farmer.
+              </p>
+            </div>
+          </div>
+        </motion.div>
+      </Container>
+    </section>
+  );
+};
 
 export default Profile;

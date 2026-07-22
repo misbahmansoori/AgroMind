@@ -7,7 +7,7 @@ const WeatherCard = ({
   rainfall = 10,
 }) => {
   return (
-    <article className="flex h-full flex-col rounded-2xl border border-[#dce8dc] bg-white p-5">
+    <article className="group flex h-full flex-col rounded-2xl border border-[#dce8dc] bg-white p-5 shadow-[0_4px_20px_rgba(15,40,20,0.03)] transition-all duration-300 hover:-translate-y-1 hover:border-green-300 hover:shadow-[0_18px_40px_rgba(46,125,50,0.1)]">
       <p className="text-sm font-medium text-gray-500">Weather Today</p>
 
       <div className="mt-5 flex items-start justify-between gap-3">
