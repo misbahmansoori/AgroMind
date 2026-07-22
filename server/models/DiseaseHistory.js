@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+const mongoose = require("mongoose");
 
 const diseaseHistorySchema = new mongoose.Schema(
   {
@@ -20,16 +20,10 @@ const diseaseHistorySchema = new mongoose.Schema(
       trim: true,
     },
 
-    symptoms: [
-      {
-        type: String,
-        trim: true,
-      },
-    ],
-
-    detectedOn: {
-      type: Date,
-      default: Date.now,
+    confidence: {
+      type: Number,
+      min: 0,
+      max: 100,
     },
 
     severity: {
@@ -38,14 +32,54 @@ const diseaseHistorySchema = new mongoose.Schema(
       default: "Low",
     },
 
-    treatment: {
+    imageUrl: {
+      type: String,
+      default: "",
+    },
+
+    symptoms: [
+      {
+        type: String,
+        trim: true,
+      },
+    ],
+
+    // Explainable AI — why this diagnosis was made
+    explanation: {
       type: String,
       trim: true,
     },
 
-    medicineUsed: {
+    organicTreatment: {
       type: String,
       trim: true,
+    },
+
+    chemicalTreatment: {
+      type: String,
+      trim: true,
+    },
+
+    prevention: {
+      type: String,
+      trim: true,
+    },
+
+    recoveryTime: {
+      type: String,
+      trim: true,
+    },
+
+    estimatedCost: {
+      type: String,
+      trim: true,
+    },
+
+    weather: {
+      temp: Number,
+      humidity: Number,
+      rainfall: Number,
+      condition: String,
     },
 
     status: {
@@ -59,8 +93,9 @@ const diseaseHistorySchema = new mongoose.Schema(
       trim: true,
     },
 
-    imageUrl: {
-      type: String,
+    detectedOn: {
+      type: Date,
+      default: Date.now,
     },
   },
   {
@@ -68,4 +103,4 @@ const diseaseHistorySchema = new mongoose.Schema(
   }
 );
 
-export default mongoose.model("DiseaseHistory", diseaseHistorySchema);
+module.exports = mongoose.model("DiseaseHistory", diseaseHistorySchema);
