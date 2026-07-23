@@ -5,7 +5,7 @@ const diseaseHistorySchema = new mongoose.Schema(
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required: true,
+      required: false,
     },
 
     cropName: {
@@ -100,7 +100,7 @@ const diseaseHistorySchema = new mongoose.Schema(
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 module.exports = mongoose.model("DiseaseHistory", diseaseHistorySchema);
