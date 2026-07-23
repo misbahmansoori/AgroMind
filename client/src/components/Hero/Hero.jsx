@@ -66,7 +66,7 @@ const Hero = () => {
             className="mt-6 max-w-lg text-lg leading-8 text-white/75"
           >
             Spot crop disease early, understand the cause, and act with
-            AI-guided treatment — before the season slips away.
+            AI-guided treatment - before the season slips away.
           </motion.p>
 
           <motion.div

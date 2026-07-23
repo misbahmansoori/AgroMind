@@ -27,7 +27,7 @@ const features = [
     icon: Mic,
     title: "Voice Farmer Mode",
     description:
-      "Ask questions by voice in Hindi or English — speech in, spoken guidance out — built for field use.",
+      "Ask questions by voice in Hindi or English - speech in, spoken guidance out - built for field use.",
   },
 ];
 
@@ -53,7 +53,7 @@ const Features = () => {
           </p>
 
           <h2 className="mt-4 font-[Manrope] text-3xl font-extrabold tracking-tight text-gray-900 sm:text-4xl lg:text-5xl">
-            Everything a farmer needs — in one assistant.
+            Everything a farmer needs - in one assistant.
           </h2>
 
           <p className="mt-5 text-lg leading-8 text-gray-600">
