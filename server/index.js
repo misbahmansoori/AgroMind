@@ -7,6 +7,7 @@ dotenv.config();
 
 const connectDB = require("./config/db");
 const detectRoutes = require("./routes/detect");
+const historyRoutes = require("./routes/history");
 
 const app = express();
 
@@ -20,6 +21,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/detect", detectRoutes);
+app.use("/api/history", historyRoutes);
 
 const PORT = process.env.PORT || 5000;
 
