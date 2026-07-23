@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import {
   ArrowLeft,
   ShieldCheck,
@@ -25,25 +25,35 @@ const sparks = [
 
 const Result = () => {
   const [showReveal, setShowReveal] = useState(true);
+  const location = useLocation();
 
   useEffect(() => {
     const timer = setTimeout(() => setShowReveal(false), 1400);
     return () => clearTimeout(timer);
   }, []);
 
+  const data = location.state;
+
   const result = {
-    disease: "Tomato Early Blight",
-    confidence: 92,
-    severity: "Moderate",
-    crop: "Tomato",
-    explanation:
-      "Brown concentric spots on older leaves with yellowing around lesions — classic fungal pattern.",
-    organic: "Neem oil spray every 5–7 days. Remove infected leaves.",
-    chemical: "Mancozeb or Chlorothalonil as per local agri guidelines.",
-    prevention: "Avoid overhead watering. Improve airflow between plants.",
-    recovery: "7–14 days with consistent treatment",
-    cost: "₹80–150 per spray cycle",
+    disease: data?.diseaseName,
+    crop: data?.cropName,
+    confidence: data?.confidence,
+    severity: data?.severity,
+    explanation: data?.explanation,
+    organic: data?.organicTreatment,
+    chemical: data?.chemicalTreatment,
+    prevention: data?.prevention,
+    recovery: data?.recoveryTime,
+    cost: data?.estimatedCost,
   };
+
+  if (!data) {
+  return (
+    <div className="min-h-screen flex items-center justify-center">
+      <p>No diagnosis found. Please scan a crop first.</p>
+    </div>
+  );
+}
 
   const treatments = [
     { label: "Organic Treatment", value: result.organic },
@@ -248,7 +258,10 @@ const Result = () => {
                     opacity: showReveal ? 0 : 1,
                     x: showReveal ? 16 : 0,
                   }}
-                  transition={{ delay: showReveal ? 0 : 0.25 + i * 0.1, duration: 0.45 }}
+                  transition={{
+                    delay: showReveal ? 0 : 0.25 + i * 0.1,
+                    duration: 0.45,
+                  }}
                   className="rounded-2xl border border-[#e8f0e8] bg-[#f7faf7] p-4 transition-colors hover:border-green-300 hover:bg-white"
                 >
                   <p className="text-xs font-semibold uppercase tracking-wide text-gray-400">
@@ -276,7 +289,9 @@ const Result = () => {
                   <IndianRupee size={14} />
                   Est. Cost
                 </div>
-                <p className="mt-1.5 font-semibold text-gray-900">{result.cost}</p>
+                <p className="mt-1.5 font-semibold text-gray-900">
+                  {result.cost}
+                </p>
               </div>
             </div>
 

@@ -3,24 +3,49 @@ import { useNavigate } from "react-router-dom";
 import { Upload, ImagePlus, Sparkles, Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
+import api from "../../api/axios";
 import Container from "../../components/common/Container";
 import Button from "../../components/common/Button";
 
 const Detect = () => {
   const navigate = useNavigate();
   const [preview, setPreview] = useState(null);
+  const [image, setImage] = useState(null);
   const [analyzing, setAnalyzing] = useState(false);
 
   const handleFile = (e) => {
     const file = e.target.files?.[0];
+
     if (!file) return;
+
+    setImage(file);
     setPreview(URL.createObjectURL(file));
   };
 
-  const handleAnalyze = () => {
-    if (!preview || analyzing) return;
-    setAnalyzing(true);
-    setTimeout(() => navigate("/result"), 1600);
+  const handleAnalyze = async () => {
+    if (!image || analyzing) return;
+
+    try {
+      setAnalyzing(true);
+
+      const formData = new FormData();
+      formData.append("image", image);
+
+      const response = await api.post("/detect", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      console.log("Gemini Response:", response.data);
+      navigate("/result", {
+        state: response.data.data,
+      });
+   
+    } catch (error) {
+      console.error("Detection failed:", error);
+      setAnalyzing(false);
+    }
   };
 
   return (
@@ -98,7 +123,11 @@ const Detect = () => {
               >
                 <motion.div
                   animate={{ y: [0, -6, 0] }}
-                  transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}
+                  transition={{
+                    duration: 2.4,
+                    repeat: Infinity,
+                    ease: "easeInOut",
+                  }}
                   className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-white text-green-700 shadow-sm"
                 >
                   <ImagePlus size={28} />
@@ -114,7 +143,9 @@ const Detect = () => {
           </label>
 
           <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
-            <label className={`cursor-pointer ${analyzing ? "pointer-events-none opacity-50" : ""}`}>
+            <label
+              className={`cursor-pointer ${analyzing ? "pointer-events-none opacity-50" : ""}`}
+            >
               <input
                 type="file"
                 accept="image/*"
