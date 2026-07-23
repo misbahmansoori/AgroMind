@@ -37,7 +37,7 @@ const DashboardPreview = () => {
 
           <p className="mt-5 text-lg leading-8 text-gray-600">
             Live crop score, weather, disease risk, AI guidance, and scan
-            history — built for fast decisions in the field.
+            history - built for fast decisions in the field.
           </p>
         </motion.div>
 

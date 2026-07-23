@@ -64,7 +64,7 @@ const HowItWorks = () => {
           </h2>
 
           <p className="mt-5 text-lg leading-8 text-gray-600">
-            A simple flow farmers can trust — fast enough for the field, clear
+            A simple flow farmers can trust - fast enough for the field, clear
             enough for action.
           </p>
         </motion.div>

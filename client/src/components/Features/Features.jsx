@@ -9,7 +9,7 @@ const features = [
     icon: ScanSearch,
     title: "AI Disease Detection",
     description:
-      "Upload a crop photo and instantly identify disease with confidence score and severity — before damage spreads.",
+      "Upload a crop photo and instantly identify disease with confidence score and severity - before damage spreads.",
   },
   {
     icon: Stethoscope,
