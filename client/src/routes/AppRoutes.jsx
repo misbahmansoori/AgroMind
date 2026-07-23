@@ -1,54 +1,47 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+
+import { Routes, Route } from "react-router-dom";
 
 import MainLayout from "../layouts/MainLayout";
 import Landing from "../pages/Landing/Landing";
 import Dashboard from "../pages/Dashboard";
-import Auth from "../pages/Auth";
+import Login from "../pages/Auth/Login";
+import Register from "../pages/Auth/Register";
 import Profile from "../pages/Profile";
 
 function AppRoutes() {
   return (
-    <BrowserRouter>
-  <Routes>
+    <Routes>
+      <Route
+        path="/"
+        element={
+          <MainLayout>
+            <Landing />
+          </MainLayout>
+        }
+      />
 
-    <Route
-      path="/"
-      element={
-        <MainLayout>
-          <Landing />
-        </MainLayout>
-      }
-    />
+      <Route
+        path="/dashboard"
+        element={
+          <MainLayout>
+            <Dashboard />
+          </MainLayout>
+        }
+      />
 
-    <Route
-      path="/dashboard"
-      element={
-        <MainLayout>
-          <Dashboard />
-        </MainLayout>
-      }
-    />
+      <Route path="/login" element={<Login />} />
 
-    <Route
-      path="/auth"
-      element={
-        <MainLayout>
-          <Auth />
-        </MainLayout>
-      }
-    />
+      <Route path="/register" element={<Register />} />
 
-    <Route
-      path="/profile"
-      element={
-        <MainLayout>
-          <Profile />
-        </MainLayout>
-      }
-    />
-
-  </Routes>
-</BrowserRouter>
+      <Route
+        path="/profile"
+        element={
+          <MainLayout>
+            <Profile />
+          </MainLayout>
+        }
+      />
+    </Routes>
   );
 }
 
