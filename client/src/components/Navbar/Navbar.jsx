@@ -108,6 +108,7 @@ const Navbar = () => {
                 </>
               ) : (
                 <>
+                <Link to="/history">History</Link>
                   <Link
                     to="/dashboard"
                     className={`transition-colors hover:text-green-700 ${
