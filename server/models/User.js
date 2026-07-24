@@ -36,7 +36,7 @@ const userSchema = new mongoose.Schema(
 
     state: {
       type: String,
-      required: true,
+      default: "",
     },
 
     district: {

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import api from "../../services/api";
+import api from "../../api/axios";
 
 import ChatBubble from "../../components/Assistant/ChatBubble";
 import ChatInput from "../../components/Assistant/ChatInput";

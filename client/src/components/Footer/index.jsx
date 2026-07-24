@@ -7,7 +7,7 @@ const quickLinks = [
   { label: "Home", href: "/" },
   { label: "Features", href: "/#features" },
   { label: "How it Works", href: "/#how-it-works" },
-  { label: "Dashboard", href: "/dashboard" },
+  { label: "Get Started", href: "/auth" },
 ];
 
 const socialLinks = [

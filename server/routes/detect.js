@@ -1,6 +1,7 @@
 const express = require("express");
 const multer = require("multer");
 const { analyzeCropImage } = require("../services/gemini");
+const { protect } = require("../middleware/auth");
 
 const DiseaseHistory = require("../models/DiseaseHistory");
 const router = express.Router();
@@ -21,7 +22,7 @@ function resolveMimeType(file) {
 }
 
 // POST /api/detect  (form-data field: image)
-router.post("/", upload.single("image"), async (req, res) => {
+router.post("/", protect, upload.single("image"), async (req, res) => {
   try {
     if (!req.file) {
       return res.status(400).json({
@@ -37,11 +38,12 @@ router.post("/", upload.single("image"), async (req, res) => {
       name: req.file.originalname,
       mimeType,
       sizeKB: Math.round(req.file.size / 1024),
+      userId: req.user._id.toString(),
     });
 
     const diagnosis = await analyzeCropImage(base64Image, mimeType);
 
-    // Save diagnosis to MongoDB
+    // Save diagnosis to this user's history only
     await DiseaseHistory.create({
       cropName: diagnosis.cropName,
       diseaseName: diagnosis.diseaseName,
@@ -54,12 +56,8 @@ router.post("/", upload.single("image"), async (req, res) => {
       prevention: diagnosis.prevention,
       recoveryTime: diagnosis.recoveryTime,
       estimatedCost: diagnosis.estimatedCost,
-
-      // No image storage yet
       imageUrl: "",
-
-      // Will be filled after authentication
-      user: undefined,
+      user: req.user._id,
     });
 
     return res.status(200).json({

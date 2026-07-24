@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   User,
   Mail,
@@ -8,39 +8,55 @@ import {
   Sprout,
   ArrowLeft,
   LogOut,
-  Pencil,
 } from "lucide-react";
 import { motion } from "framer-motion";
 
 import Container from "../../components/common/Container";
 import Button from "../../components/common/Button";
-
-// Mock profile — replace with logged-in user from Auth/API later
-const profile = {
-  name: "Ramesh Patil",
-  email: "ramesh.farmer@email.com",
-  phone: "+91 98765 43210",
-  language: "Hindi · English",
-  location: "Nashik, Maharashtra",
-  farmName: "Green Valley Farm",
-  crops: "Tomato, Chili, Cotton",
-  farmSize: "4.5 acres",
-};
-
-const infoRows = [
-  { icon: Mail, label: "Email", value: profile.email },
-  { icon: Phone, label: "Phone", value: profile.phone },
-  { icon: Languages, label: "Language", value: profile.language },
-  { icon: MapPin, label: "Location", value: profile.location },
-];
-
-const farmRows = [
-  { icon: Sprout, label: "Farm Name", value: profile.farmName },
-  { icon: Sprout, label: "Crops", value: profile.crops },
-  { icon: MapPin, label: "Farm Size", value: profile.farmSize },
-];
+import { useAuth } from "../../context/AuthContext";
 
 const Profile = () => {
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate("/auth");
+  };
+
+  const infoRows = [
+    { icon: Mail, label: "Email", value: user?.email || "—" },
+    { icon: Phone, label: "Phone", value: user?.phone || "Not added" },
+    {
+      icon: Languages,
+      label: "Language",
+      value: user?.language || "Hindi",
+    },
+    {
+      icon: MapPin,
+      label: "Location",
+      value: [user?.district, user?.state].filter(Boolean).join(", ") || "Not set",
+    },
+  ];
+
+  const farmRows = [
+    {
+      icon: Sprout,
+      label: "Farm Name",
+      value: user?.farmName || "Not set",
+    },
+    {
+      icon: Sprout,
+      label: "Crops",
+      value: user?.cropName || "Not set",
+    },
+    {
+      icon: MapPin,
+      label: "Farm Size",
+      value: user?.farmArea ? `${user.farmArea} acres` : "Not set",
+    },
+  ];
+
   return (
     <section className="page-atmosphere relative min-h-screen overflow-hidden pb-16 pt-32">
       <div className="pointer-events-none absolute -right-16 top-28 h-64 w-64 rounded-full bg-green-200/30 blur-3xl" />
@@ -60,36 +76,30 @@ const Profile = () => {
           transition={{ duration: 0.5 }}
           className="mt-6 grid gap-6 lg:grid-cols-12"
         >
-          {/* Identity card */}
           <div className="rounded-[28px] border border-[#dce8dc] bg-white p-6 shadow-[0_12px_36px_rgba(15,40,20,0.05)] lg:col-span-4">
             <div className="flex flex-col items-center text-center">
               <div className="flex h-24 w-24 items-center justify-center rounded-full bg-[#eaf5ea] text-green-700">
                 <User size={40} strokeWidth={1.6} />
               </div>
               <h1 className="mt-4 font-[Manrope] text-2xl font-extrabold text-gray-900">
-                {profile.name}
+                {user?.name || "Farmer"}
               </h1>
-              <p className="mt-1 text-sm text-gray-500">{profile.farmName}</p>
+              <p className="mt-1 text-sm text-gray-500">
+                {user?.farmName || "Your farm account"}
+              </p>
               <span className="mt-4 rounded-lg bg-[#eaf5ea] px-3 py-1 text-xs font-semibold text-green-700">
-                Guest preview · Auth coming soon
+                Signed in
               </span>
             </div>
 
             <div className="mt-8 space-y-3">
-              <Button className="w-full" variant="secondary">
-                <Pencil size={16} />
-                Edit Profile
+              <Button className="w-full" variant="ghost" onClick={handleLogout}>
+                <LogOut size={16} />
+                Sign Out
               </Button>
-              <Link to="/auth" className="block">
-                <Button className="w-full" variant="ghost">
-                  <LogOut size={16} />
-                  Sign Out
-                </Button>
-              </Link>
             </div>
           </div>
 
-          {/* Details */}
           <div className="space-y-6 lg:col-span-8">
             <div className="rounded-[28px] border border-[#dce8dc] bg-white p-6 shadow-[0_12px_36px_rgba(15,40,20,0.05)]">
               <h2 className="font-[Manrope] text-lg font-bold text-gray-900">
@@ -139,18 +149,6 @@ const Profile = () => {
                   );
                 })}
               </div>
-            </div>
-
-            <div className="rounded-[28px] border border-dashed border-green-300 bg-[#f4faf4] p-5 text-sm leading-7 text-gray-600">
-              <p className="font-[Manrope] font-bold text-green-800">
-                How login will work later
-              </p>
-              <p className="mt-1">
-                Right now Dashboard, Detect, Result, and Profile are open for
-                demo. After your teammate finishes Auth, these pages will require
-                login first — then this profile will show the real logged-in
-                farmer.
-              </p>
             </div>
           </div>
         </motion.div>

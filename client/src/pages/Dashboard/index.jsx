@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 
 import api from "../../api/axios";
+import { useAuth } from "../../context/AuthContext";
 import Container from "../../components/common/Container";
 import Button from "../../components/common/Button";
 import HealthCard from "../../components/HealthCard";
@@ -24,12 +25,14 @@ const fadeUp = {
 };
 
 const Dashboard = () => {
+  const { user } = useAuth();
+  const displayName = user?.name?.split(" ")[0] || "Farmer";
+
   const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const latestScan = history[0];
 
-  const totalScans = history.length;
   const navigate = useNavigate();
 
   const todayScans = history.filter((item) => {
@@ -50,8 +53,8 @@ const Dashboard = () => {
       setLoading(true);
       setError("");
 
-      const response = await api.get("/history");
-      setHistory(response.data.data);
+      const response = await api.get("/history", { params: { limit: 10 } });
+      setHistory(response.data.data || []);
     } catch (err) {
       console.error(err);
       setError("Unable to load dashboard.");
@@ -63,12 +66,13 @@ const Dashboard = () => {
   useEffect(() => {
     fetchHistory();
   }, []);
+
   if (loading) {
     return (
       <div className="flex min-h-[70vh] items-center justify-center">
         <div className="text-center">
-          <div className="mx-auto h-12 w-12 animate-spin rounded-full border-4 border-green-200 border-t-green-600"></div>
-          <p className="mt-4 text-gray-600 font-medium">Loading dashboard...</p>
+          <div className="mx-auto h-12 w-12 animate-spin rounded-full border-4 border-green-200 border-t-green-600" />
+          <p className="mt-4 font-medium text-gray-600">Loading dashboard...</p>
         </div>
       </div>
     );
@@ -81,9 +85,7 @@ const Dashboard = () => {
           <h2 className="text-lg font-semibold text-red-700">
             Unable to load dashboard
           </h2>
-
           <p className="mt-2 text-gray-600">Please try again.</p>
-
           <button
             onClick={fetchHistory}
             className="mt-4 rounded-lg bg-green-600 px-4 py-2 text-white hover:bg-green-700"
@@ -97,27 +99,29 @@ const Dashboard = () => {
 
   if (!loading && history.length === 0) {
     return (
-      <div className="flex min-h-[70vh] items-center justify-center px-6">
-        <div className="max-w-md rounded-2xl border border-dashed border-green-300 bg-green-50 p-8 text-center">
-          <div className="mb-4 text-5xl">🌱</div>
-
-          <h2 className="text-2xl font-bold text-gray-900">
-            Welcome to AgroMind
-          </h2>
-
-          <p className="mt-3 text-gray-600">
-            You haven't analyzed any crops yet. Upload your first crop image to
-            receive an AI-powered diagnosis.
-          </p>
-
-          <button
-            onClick={() => navigate("/detect")}
-            className="mt-6 rounded-xl bg-green-600 px-6 py-3 font-semibold text-white transition hover:bg-green-700"
-          >
-            Scan Your First Crop
-          </button>
-        </div>
-      </div>
+      <section className="page-atmosphere relative min-h-screen overflow-hidden pb-16 pt-32">
+        <Container>
+          <div className="mx-auto max-w-lg rounded-[28px] border border-dashed border-green-300 bg-white/90 p-8 text-center shadow-sm">
+            <p className="font-[Manrope] text-sm font-semibold uppercase tracking-[0.24em] text-green-700">
+              Your farm
+            </p>
+            <h2 className="mt-3 font-[Manrope] text-2xl font-extrabold text-gray-900">
+              Welcome, {displayName}
+            </h2>
+            <p className="mt-3 text-gray-600">
+              You have not analyzed any crops yet. Upload your first crop image
+              to receive an AI-powered diagnosis — it will appear only on your
+              dashboard.
+            </p>
+            <button
+              onClick={() => navigate("/detect")}
+              className="mt-6 rounded-xl bg-green-700 px-6 py-3 font-semibold text-white transition hover:bg-green-800"
+            >
+              Scan Your First Crop
+            </button>
+          </div>
+        </Container>
+      </section>
     );
   }
 
@@ -141,7 +145,8 @@ const Dashboard = () => {
               </div>
 
               <h1 className="mt-4 font-[Manrope] text-3xl font-extrabold tracking-tight text-gray-900 sm:text-4xl">
-                Welcome back, <span className="shimmer-text">Farmer</span>
+                Welcome back,{" "}
+                <span className="shimmer-text">{displayName}</span>
               </h1>
               <p className="mt-2 max-w-lg text-gray-600">
                 Your crop health, weather, and AI guidance in one clear view.
@@ -150,9 +155,7 @@ const Dashboard = () => {
               <div className="mt-5 flex flex-wrap gap-3 text-sm">
                 <div className="rounded-xl bg-white/90 px-3.5 py-2 ring-1 ring-[#dce8dc]">
                   <span className="text-gray-500">Health</span>{" "}
-                  <span className="font-bold text-green-700">
-                    {healthScore}
-                  </span>
+                  <span className="font-bold text-green-700">{healthScore}</span>
                 </div>
                 <div className="rounded-xl bg-white/90 px-3.5 py-2 ring-1 ring-[#dce8dc]">
                   <span className="text-gray-500">Risk</span>{" "}

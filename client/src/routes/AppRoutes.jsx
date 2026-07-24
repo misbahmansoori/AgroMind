@@ -1,6 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 
 import MainLayout from "../layouts/MainLayout";
+import ProtectedRoute from "../components/ProtectedRoute";
 import Landing from "../pages/Landing/Landing";
 import Dashboard from "../pages/Dashboard";
 import Auth from "../pages/Auth";
@@ -10,86 +11,44 @@ import Result from "../pages/Result/Result";
 import History from "../pages/History/History";
 import Assistant from "../pages/Assistant/Assistant";
 
-/*
-  Auth flow (planned):
-  - Public:  /  /auth
-  - Protected later: /dashboard /detect /result /profile
-  - Right now all app pages are open for demo until Auth is wired.
-*/
+function withLayout(page) {
+  return <MainLayout>{page}</MainLayout>;
+}
 
 function AppRoutes() {
   return (
     <Routes>
-      <Route
-        path="/"
-        element={
-          <MainLayout>
-            <Landing />
-          </MainLayout>
-        }
-      />
+      <Route path="/" element={withLayout(<Landing />)} />
+      <Route path="/auth" element={withLayout(<Auth />)} />
 
       <Route
         path="/dashboard"
-        element={
-          <MainLayout>
-            <Dashboard />
-          </MainLayout>
-        }
+        element={<ProtectedRoute>{withLayout(<Dashboard />)}</ProtectedRoute>}
       />
 
       <Route
         path="/detect"
-        element={
-          <MainLayout>
-            <Detect />
-          </MainLayout>
-        }
-      />
-
-      <Route
-        path="/auth"
-        element={
-          <MainLayout>
-            <Auth />
-          </MainLayout>
-        }
+        element={<ProtectedRoute>{withLayout(<Detect />)}</ProtectedRoute>}
       />
 
       <Route
         path="/result"
-        element={
-          <MainLayout>
-            <Result />
-          </MainLayout>
-        }
-      />
-
-      <Route
-        path="/profile"
-        element={
-          <MainLayout>
-            <Profile />
-          </MainLayout>
-        }
+        element={<ProtectedRoute>{withLayout(<Result />)}</ProtectedRoute>}
       />
 
       <Route
         path="/history"
-        element={
-          <MainLayout>
-            <History />
-          </MainLayout>
-        }
+        element={<ProtectedRoute>{withLayout(<History />)}</ProtectedRoute>}
+      />
+
+      <Route
+        path="/profile"
+        element={<ProtectedRoute>{withLayout(<Profile />)}</ProtectedRoute>}
       />
 
       <Route
         path="/assistant"
-        element={
-          <MainLayout>
-            <Assistant />
-          </MainLayout>
-        }
+        element={<ProtectedRoute>{withLayout(<Assistant />)}</ProtectedRoute>}
       />
     </Routes>
   );
