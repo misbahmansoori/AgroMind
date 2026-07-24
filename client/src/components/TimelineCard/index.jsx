@@ -28,20 +28,42 @@ const toneClass = {
   bad: "bg-red-100 text-red-700",
 };
 
-const TimelineCard = ({ events = defaultEvents }) => {
+const TimelineCard = ({ events = [] }) => {
+  const timelineEvents =
+    events.length > 0
+      ? events.map((item) => ({
+          id: item._id,
+          crop: item.cropName,
+          result: `${item.diseaseName} • ${item.severity}`,
+          tone:
+            item.severity === "High"
+              ? "bad"
+              : item.severity === "Medium"
+                ? "warn"
+                : "good",
+          date: new Date(item.detectedOn).toLocaleString("en-IN", {
+            day: "numeric",
+            month: "short",
+            hour: "numeric",
+            minute: "2-digit",
+          }),
+        }))
+      : defaultEvents;
   return (
     <article className="flex h-full flex-col rounded-2xl border border-[#dce8dc] bg-white p-5 shadow-[0_4px_20px_rgba(15,40,20,0.03)] transition-all duration-300 hover:-translate-y-1 hover:border-green-300 hover:shadow-[0_18px_40px_rgba(46,125,50,0.1)]">
       <div className="flex items-center justify-between">
-        <p className="text-sm font-medium text-gray-500">Crop Health Timeline</p>
+        <p className="text-sm font-medium text-gray-500">
+          Crop Health Timeline
+        </p>
         <span className="text-xs font-medium text-green-700">
-          3 recent scans
+          {`${timelineEvents.length} recent scans`}
         </span>
       </div>
 
       <ul className="mt-5 flex flex-1 flex-col gap-0">
-        {events.map((event, index) => (
+        {timelineEvents.map((event, index) => (
           <li key={event.id} className="relative flex gap-4 pb-5 last:pb-0">
-            {index < events.length - 1 && (
+            {index < timelineEvents.length - 1 && (
               <span className="absolute left-[7px] top-4 h-[calc(100%-8px)] w-px bg-[#dce8dc]" />
             )}
             <span className="relative z-10 mt-1.5 h-3.5 w-3.5 shrink-0 rounded-full border-2 border-white bg-green-600 shadow-[0_0_0_2px_#dce8dc]" />
