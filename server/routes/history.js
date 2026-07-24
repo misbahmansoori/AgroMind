@@ -1,14 +1,20 @@
 const express = require("express");
 const DiseaseHistory = require("../models/DiseaseHistory");
+const { protect } = require("../middleware/auth");
 
 const router = express.Router();
 
-// GET /api/history
+// All history routes require a logged-in user
+router.use(protect);
+
+// GET /api/history — only this user's scans
 router.get("/", async (req, res) => {
   try {
-    const history = await DiseaseHistory.find()
+    const limit = Math.min(Number(req.query.limit) || 50, 100);
+
+    const history = await DiseaseHistory.find({ user: req.user._id })
       .sort({ createdAt: -1 })
-      .limit(5);
+      .limit(limit);
 
     res.json({
       success: true,
@@ -24,9 +30,13 @@ router.get("/", async (req, res) => {
   }
 });
 
+// DELETE /api/history/:id — only own scans
 router.delete("/:id", async (req, res) => {
   try {
-    const deleted = await DiseaseHistory.findByIdAndDelete(req.params.id);
+    const deleted = await DiseaseHistory.findOneAndDelete({
+      _id: req.params.id,
+      user: req.user._id,
+    });
 
     if (!deleted) {
       return res.status(404).json({
@@ -48,4 +58,5 @@ router.delete("/:id", async (req, res) => {
     });
   }
 });
+
 module.exports = router;

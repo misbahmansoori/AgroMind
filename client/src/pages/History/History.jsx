@@ -131,7 +131,7 @@ export default function History() {
         </Link>
 
         <h1 className="mb-8 font-[Manrope] text-4xl font-bold text-gray-900">
-          Crop History
+          Your Crop History
         </h1>
 
         <div className="mb-8 grid gap-4 md:grid-cols-4">
