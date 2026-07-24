@@ -1,22 +1,37 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 
-const PredictionCard = ({ report }) => {
+const PredictionCard = ({ report, weather }) => {
   const label = "Disease Risk";
 
-  const risk = report
+  // Blend latest scan severity with live weather humidity risk when available
+  const weatherBump =
+    weather?.riskLevel === "High" ? 15 : weather?.riskLevel === "Medium" ? 8 : 0;
+
+  const baseRisk = report
     ? report.severity === "High"
       ? 90
       : report.severity === "Medium"
         ? 60
         : 20
-    : 18;
+    : weather?.riskLevel === "High"
+      ? 55
+      : weather?.riskLevel === "Medium"
+        ? 35
+        : 18;
 
-  const level = report ? report.severity : "Low";
+  const risk = Math.min(100, baseRisk + (report ? weatherBump : 0));
+
+  const level =
+    risk >= 70 ? "High" : risk >= 40 ? "Medium" : report?.severity || weather?.riskLevel || "Low";
 
   const description = report
-    ? `Latest AI diagnosis indicates ${report.severity.toLowerCase()} disease severity for ${report.cropName}.`
-    : "Based on humidity, rainfall, and recent field history.";
+    ? `Latest AI diagnosis indicates ${report.severity.toLowerCase()} disease severity for ${report.cropName}${
+        weather ? ` · humidity ${weather.humidity}%` : ""
+      }.`
+    : weather?.advice?.[0] ||
+      weather?.insight ||
+      "Based on humidity, rainfall, and recent field history.";
   const ring = Math.min(100, Math.max(0, risk));
   const [display, setDisplay] = useState(0);
   const circumference = 2 * Math.PI * 44;

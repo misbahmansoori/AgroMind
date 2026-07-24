@@ -82,7 +82,29 @@ const DashboardPreview = () => {
                 viewport={{ once: true }}
                 className="lg:col-span-3"
               >
-                <WeatherCard />
+                <WeatherCard
+                  weather={{
+                    city: "Your farm",
+                    country: "IN",
+                    temperature: 28,
+                    feelsLike: 30,
+                    humidity: 78,
+                    rainfall: 0,
+                    windSpeed: 12,
+                    condition: "Clouds",
+                    description: "broken clouds",
+                    iconUrl: "https://openweathermap.org/img/wn/04d@2x.png",
+                    rainExpected: true,
+                    riskLevel: "Medium",
+                    source: "gps",
+                    insight:
+                      "High humidity today. Monitor crops for fungal diseases.",
+                    advice: [
+                      "High humidity today. Monitor crops for fungal diseases.",
+                      "Rain expected. Delay pesticide spraying.",
+                    ],
+                  }}
+                />
               </motion.div>
 
               <motion.div
