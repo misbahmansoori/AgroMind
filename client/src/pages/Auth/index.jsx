@@ -1,7 +1,26 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import API from "../../services/api";
 
 export default function Auth() {
   const [isLogin, setIsLogin] = useState(true);
+  const navigate = useNavigate();
+
+const [formData, setFormData] = useState({
+  name: "",
+  email: "",
+  phone: "",
+  state: "",
+  password: "",
+  confirmPassword: "",
+});
+
+const handleChange = (e) => {
+  setFormData({
+    ...formData,
+    [e.target.name]: e.target.value,
+  });
+};
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-100 via-white to-green-200 px-4">
