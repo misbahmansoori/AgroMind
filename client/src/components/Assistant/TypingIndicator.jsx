@@ -1,10 +1,15 @@
 const TypingIndicator = () => {
   return (
-    <div className="flex justify-start mb-4">
-      <div className="bg-white border border-gray-200 rounded-2xl rounded-bl-md px-4 py-3 shadow-sm">
-        <span className="animate-pulse text-gray-500">
-          AgroMind AI is thinking...
-        </span>
+    <div className="mb-4 flex justify-start">
+      <div className="mr-2 mt-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-green-700 text-xs font-bold text-white">
+        AI
+      </div>
+      <div className="rounded-2xl rounded-bl-md border border-[#dce8dc] bg-white px-4 py-3 shadow-sm">
+        <div className="flex items-center gap-1.5">
+          <span className="h-2 w-2 animate-bounce rounded-full bg-green-600 [animation-delay:-0.2s]" />
+          <span className="h-2 w-2 animate-bounce rounded-full bg-green-600 [animation-delay:-0.1s]" />
+          <span className="h-2 w-2 animate-bounce rounded-full bg-green-600" />
+        </div>
       </div>
     </div>
   );
