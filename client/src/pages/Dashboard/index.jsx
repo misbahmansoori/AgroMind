@@ -6,13 +6,16 @@ import { useNavigate } from "react-router-dom";
 
 import api from "../../api/axios";
 import { getWeather } from "../../services/weatherService";
+import { translateFields } from "../../services/translateService";
 import {
   detectFarmerLocation,
   profileCity,
 } from "../../utils/location";
 import { useAuth } from "../../context/AuthContext";
+import { useLanguage } from "../../context/LanguageContext";
 import Container from "../../components/common/Container";
 import Button from "../../components/common/Button";
+import LanguageToggle from "../../components/common/LanguageToggle";
 import HealthCard from "../../components/HealthCard";
 import WeatherCard from "../../components/WeatherCard";
 import PredictionCard from "../../components/PredictionCard";
@@ -29,20 +32,18 @@ const fadeUp = {
   }),
 };
 
-async function loadLiveWeather(user) {
-  // 1) Prefer browser GPS so we never hardcode a city
+async function loadLiveWeather(user, lang = "en") {
   try {
     const { lat, lon } = await detectFarmerLocation();
-    const data = await getWeather({ lat, lon });
+    const data = await getWeather({ lat, lon, lang });
     if (data?.success && data.weather) return data.weather;
   } catch (err) {
     console.warn("GPS weather unavailable:", err?.message || err);
   }
 
-  // 2) Fallback to profile district/state/village
   const city = profileCity(user);
   if (city) {
-    const data = await getWeather({ city });
+    const data = await getWeather({ city, lang });
     if (data?.success && data.weather) {
       return { ...data.weather, source: "profile" };
     }
@@ -51,20 +52,55 @@ async function loadLiveWeather(user) {
   return null;
 }
 
+/** Translate AI scan text fields (from image) into Hindi for display */
+async function localizeHistory(items, lang) {
+  if (lang !== "hi" || !items?.length) return items;
+
+  const fields = {};
+  items.forEach((item, i) => {
+    if (item.cropName) fields[`crop_${i}`] = item.cropName;
+    if (item.diseaseName) fields[`disease_${i}`] = item.diseaseName;
+    if (item.explanation) fields[`explain_${i}`] = item.explanation;
+    if (item.organicTreatment) fields[`organic_${i}`] = item.organicTreatment;
+  });
+
+  if (Object.keys(fields).length === 0) return items;
+
+  try {
+    const res = await translateFields(fields, "hi");
+    const data = res?.data || {};
+
+    return items.map((item, i) => ({
+      ...item,
+      cropName: data[`crop_${i}`] || item.cropName,
+      diseaseName: data[`disease_${i}`] || item.diseaseName,
+      explanation: data[`explain_${i}`] || item.explanation,
+      organicTreatment: data[`organic_${i}`] || item.organicTreatment,
+    }));
+  } catch (err) {
+    console.error("Diagnosis translate failed:", err);
+    return items;
+  }
+}
+
 const Dashboard = () => {
   const { user } = useAuth();
-  const displayName = user?.name?.split(" ")[0] || "Farmer";
+  const { t, severityLabel, lang } = useLanguage();
+  const displayName =
+    user?.name?.split(" ")[0] || (lang === "hi" ? "किसान" : "Farmer");
   const navigate = useNavigate();
 
+  const [historyRaw, setHistoryRaw] = useState([]);
   const [history, setHistory] = useState([]);
   const [weather, setWeather] = useState(null);
   const [weatherLoading, setWeatherLoading] = useState(true);
   const [loading, setLoading] = useState(true);
+  const [localizing, setLocalizing] = useState(false);
   const [error, setError] = useState("");
 
   const latestScan = history[0];
 
-  const todayScans = history.filter((item) => {
+  const todayScans = historyRaw.filter((item) => {
     const today = new Date().toDateString();
     return new Date(item.detectedOn).toDateString() === today;
   }).length;
@@ -85,7 +121,7 @@ const Dashboard = () => {
       const historyPromise = api.get("/history", { params: { limit: 10 } });
 
       setWeatherLoading(true);
-      const weatherPromise = loadLiveWeather(user)
+      const weatherPromise = loadLiveWeather(user, lang)
         .then((live) => setWeather(live))
         .catch((err) => {
           console.error("Weather fetch failed:", err);
@@ -94,14 +130,48 @@ const Dashboard = () => {
         .finally(() => setWeatherLoading(false));
 
       const [historyRes] = await Promise.all([historyPromise, weatherPromise]);
-      setHistory(historyRes.data.data || []);
+      const raw = historyRes.data.data || [];
+      setHistoryRaw(raw);
+
+      setLocalizing(lang === "hi" && raw.length > 0);
+      const localized = await localizeHistory(raw, lang);
+      setHistory(localized);
     } catch (err) {
       console.error(err);
-      setError("Unable to load dashboard.");
+      setError("fail");
     } finally {
+      setLocalizing(false);
       setLoading(false);
     }
   };
+
+  // Re-translate scan content + weather tips when language toggles
+  useEffect(() => {
+    let cancelled = false;
+
+    const applyLanguage = async () => {
+      if (!historyRaw.length && !weather) return;
+
+      setLocalizing(lang === "hi" && historyRaw.length > 0);
+      try {
+        const [localized, liveWeather] = await Promise.all([
+          localizeHistory(historyRaw, lang),
+          loadLiveWeather(user, lang).catch(() => null),
+        ]);
+        if (cancelled) return;
+        setHistory(localized);
+        if (liveWeather) setWeather(liveWeather);
+      } finally {
+        if (!cancelled) setLocalizing(false);
+      }
+    };
+
+    applyLanguage();
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [lang]);
 
   useEffect(() => {
     fetchDashboard();
@@ -113,7 +183,7 @@ const Dashboard = () => {
       <div className="flex min-h-[70vh] items-center justify-center">
         <div className="text-center">
           <div className="mx-auto h-12 w-12 animate-spin rounded-full border-4 border-green-200 border-t-green-600" />
-          <p className="mt-4 font-medium text-gray-600">Loading dashboard...</p>
+          <p className="mt-4 font-medium text-gray-600">{t("loadingDashboard")}</p>
         </div>
       </div>
     );
@@ -124,42 +194,41 @@ const Dashboard = () => {
       <div className="flex min-h-[70vh] items-center justify-center">
         <div className="rounded-xl border border-red-200 bg-red-50 p-6 text-center">
           <h2 className="text-lg font-semibold text-red-700">
-            Unable to load dashboard
+            {t("unableTitle")}
           </h2>
-          <p className="mt-2 text-gray-600">Please try again.</p>
+          <p className="mt-2 text-gray-600">{t("pleaseRetry")}</p>
           <button
             onClick={fetchDashboard}
             className="mt-4 rounded-lg bg-green-600 px-4 py-2 text-white hover:bg-green-700"
           >
-            Retry
+            {t("retry")}
           </button>
         </div>
       </div>
     );
   }
 
-  if (history.length === 0) {
+  if (historyRaw.length === 0) {
     return (
       <section className="page-atmosphere relative min-h-screen overflow-hidden pb-16 pt-32">
         <Container>
+          <div className="mb-6 flex justify-end">
+            <LanguageToggle />
+          </div>
           <div className="mx-auto grid max-w-4xl gap-6 lg:grid-cols-2">
             <div className="rounded-[28px] border border-dashed border-green-300 bg-white/90 p-8 text-center shadow-sm lg:text-left">
               <p className="font-[Manrope] text-sm font-semibold uppercase tracking-[0.24em] text-green-700">
-                Your farm
+                {t("yourFarm")}
               </p>
               <h2 className="mt-3 font-[Manrope] text-2xl font-extrabold text-gray-900">
-                Welcome, {displayName}
+                {t("welcome")}, {displayName}
               </h2>
-              <p className="mt-3 text-gray-600">
-                You have not analyzed any crops yet. Upload your first crop image
-                to receive an AI-powered diagnosis — weather for your area is
-                already live below.
-              </p>
+              <p className="mt-3 text-gray-600">{t("emptyBody")}</p>
               <button
                 onClick={() => navigate("/detect")}
                 className="mt-6 rounded-xl bg-green-700 px-6 py-3 font-semibold text-white transition hover:bg-green-800"
               >
-                Scan Your First Crop
+                {t("scanFirstCrop")}
               </button>
             </div>
             <WeatherCard weather={weather} loading={weatherLoading} />
@@ -175,6 +244,17 @@ const Dashboard = () => {
       <div className="pointer-events-none absolute -left-16 bottom-10 h-72 w-72 rounded-full bg-emerald-100/60 blur-3xl" />
 
       <Container className="relative">
+        <div className="mb-4 flex flex-wrap items-center justify-end gap-3">
+          {localizing && (
+            <span className="rounded-lg bg-amber-50 px-3 py-1.5 text-xs font-medium text-amber-800 ring-1 ring-amber-100">
+              {lang === "hi"
+                ? "AI निदान हिंदी में अनुवाद हो रहा है…"
+                : "Updating language…"}
+            </span>
+          )}
+          <LanguageToggle />
+        </div>
+
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -185,37 +265,37 @@ const Dashboard = () => {
             <div>
               <div className="inline-flex items-center gap-2 rounded-lg bg-white/80 px-3 py-1.5 text-xs font-semibold text-green-700 ring-1 ring-green-100">
                 <span className="live-dot h-2 w-2 rounded-full bg-green-600" />
-                Live farm status
+                {t("liveFarmStatus")}
               </div>
 
               <h1 className="mt-4 font-[Manrope] text-3xl font-extrabold tracking-tight text-gray-900 sm:text-4xl">
-                Welcome back,{" "}
+                {t("welcomeBack")},{" "}
                 <span className="shimmer-text">{displayName}</span>
               </h1>
-              <p className="mt-2 max-w-lg text-gray-600">
-                Your crop health, weather, and AI guidance in one clear view.
-              </p>
+              <p className="mt-2 max-w-lg text-gray-600">{t("subtitle")}</p>
 
               <div className="mt-5 flex flex-wrap gap-3 text-sm">
                 <div className="rounded-xl bg-white/90 px-3.5 py-2 ring-1 ring-[#dce8dc]">
-                  <span className="text-gray-500">Health</span>{" "}
+                  <span className="text-gray-500">{t("health")}</span>{" "}
                   <span className="font-bold text-green-700">{healthScore}</span>
                 </div>
                 <div className="rounded-xl bg-white/90 px-3.5 py-2 ring-1 ring-[#dce8dc]">
-                  <span className="text-gray-500">Risk</span>{" "}
+                  <span className="text-gray-500">{t("risk")}</span>{" "}
                   <span className="font-bold text-green-700">
-                    {latestScan ? latestScan.severity : "No Data"}
+                    {latestScan
+                      ? severityLabel(latestScan.severity)
+                      : t("noData")}
                   </span>
                 </div>
                 <div className="inline-flex items-center gap-1.5 rounded-xl bg-white/90 px-3.5 py-2 ring-1 ring-[#dce8dc]">
                   <Activity size={14} className="text-green-700" />
                   <span className="font-medium text-gray-700">
-                    {todayScans} scans today
+                    {todayScans} {t("scansToday")}
                   </span>
                 </div>
                 {weather && (
                   <div className="rounded-xl bg-white/90 px-3.5 py-2 ring-1 ring-[#dce8dc]">
-                    <span className="text-gray-500">Weather</span>{" "}
+                    <span className="text-gray-500">{t("weather")}</span>{" "}
                     <span className="font-bold text-green-700">
                       {weather.temperature}°C · {weather.condition}
                     </span>
@@ -227,7 +307,7 @@ const Dashboard = () => {
             <Link to="/detect">
               <Button className="px-6 py-3.5">
                 <ScanSearch size={18} />
-                Upload Crop Photo
+                {t("uploadCropPhoto")}
                 <ArrowRight size={18} />
               </Button>
             </Link>

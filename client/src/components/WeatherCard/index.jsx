@@ -11,6 +11,7 @@ import {
   Sparkles,
   Navigation,
 } from "lucide-react";
+import { useLanguage } from "../../context/LanguageContext";
 
 const iconForCondition = (condition = "") => {
   const key = condition.toLowerCase();
@@ -68,7 +69,6 @@ const themeForCondition = (condition = "", riskLevel = "Low") => {
     };
   }
 
-  // Cloudy / default — soft farm sky
   return {
     card: "from-[#1d4ed8] via-[#0d9488] to-[#15803d]",
     glow: "bg-emerald-200/30",
@@ -87,16 +87,16 @@ const tipTone = (riskLevel) => {
 };
 
 const WeatherCard = ({ weather, loading = false }) => {
+  const { t } = useLanguage();
+
   if (loading) {
     return (
       <article className="relative flex h-full min-h-[320px] flex-col overflow-hidden rounded-[24px] border border-[#dce8dc] bg-gradient-to-br from-[#e8f4ff] via-white to-[#eaf7ef] p-5">
         <div className="absolute -right-8 -top-8 h-28 w-28 animate-pulse rounded-full bg-sky-200/50 blur-2xl" />
         <p className="text-sm font-medium text-gray-600">
-          Detecting your location…
+          {t("detectingLocation")}
         </p>
-        <p className="mt-2 text-xs text-gray-500">
-          Fetching live weather for your farm
-        </p>
+        <p className="mt-2 text-xs text-gray-500">{t("fetchingWeather")}</p>
         <div className="mt-8 flex flex-1 items-center justify-center">
           <div className="h-12 w-12 animate-spin rounded-full border-4 border-sky-100 border-t-sky-500" />
         </div>
@@ -107,9 +107,11 @@ const WeatherCard = ({ weather, loading = false }) => {
   if (!weather) {
     return (
       <article className="flex h-full min-h-[280px] flex-col justify-center rounded-[24px] border border-dashed border-green-300 bg-white p-5">
-        <p className="text-sm font-medium text-gray-700">Weather unavailable</p>
+        <p className="text-sm font-medium text-gray-700">
+          {t("weatherUnavailable")}
+        </p>
         <p className="mt-2 text-sm text-gray-500">
-          Allow location access, or add your district/state in Profile.
+          {t("weatherUnavailableHint")}
         </p>
       </article>
     );
@@ -133,8 +135,10 @@ const WeatherCard = ({ weather, loading = false }) => {
 
       <div className="relative flex items-start justify-between gap-2">
         <div>
-          <p className={`text-xs font-semibold uppercase tracking-[0.18em] ${theme.muted}`}>
-            Weather Today
+          <p
+            className={`text-xs font-semibold uppercase tracking-[0.18em] ${theme.muted}`}
+          >
+            {t("weatherToday")}
           </p>
           <div className="mt-2 flex flex-wrap items-center gap-2">
             <span
@@ -149,7 +153,7 @@ const WeatherCard = ({ weather, loading = false }) => {
                 className={`inline-flex items-center gap-1 rounded-lg px-2 py-1 text-[11px] font-medium ring-1 ${theme.chip}`}
               >
                 <Navigation size={11} />
-                Near you
+                {t("nearYou")}
               </span>
             )}
           </div>
@@ -175,39 +179,53 @@ const WeatherCard = ({ weather, loading = false }) => {
       </div>
 
       <div className="relative mt-4">
-        <p className={`font-[Manrope] text-5xl font-extrabold tracking-tight ${theme.value}`}>
+        <p
+          className={`font-[Manrope] text-5xl font-extrabold tracking-tight ${theme.value}`}
+        >
           {weather.temperature}°
           <span className="text-2xl font-bold opacity-80">C</span>
         </p>
         <p className={`mt-1 text-sm capitalize ${theme.muted}`}>
           {weather.description || weather.condition}
-          {weather.feelsLike != null ? ` · feels ${weather.feelsLike}°C` : ""}
+          {weather.feelsLike != null
+            ? ` · ${t("feels")} ${weather.feelsLike}°C`
+            : ""}
         </p>
       </div>
 
       <div className="relative mt-5 grid grid-cols-3 gap-2">
-        <div className={`rounded-2xl px-2.5 py-3 ring-1 backdrop-blur-sm ${theme.panel}`}>
+        <div
+          className={`rounded-2xl px-2.5 py-3 ring-1 backdrop-blur-sm ${theme.panel}`}
+        >
           <div className={`flex items-center gap-1 text-[10px] ${theme.muted}`}>
             <Droplets size={12} />
-            Humidity
+            {t("humidity")}
           </div>
           <p className={`mt-1 font-[Manrope] text-base font-bold ${theme.value}`}>
             {weather.humidity}%
           </p>
         </div>
-        <div className={`rounded-2xl px-2.5 py-3 ring-1 backdrop-blur-sm ${theme.panel}`}>
+        <div
+          className={`rounded-2xl px-2.5 py-3 ring-1 backdrop-blur-sm ${theme.panel}`}
+        >
           <div className={`flex items-center gap-1 text-[10px] ${theme.muted}`}>
             <CloudRain size={12} />
-            Rain
+            {t("rain")}
           </div>
           <p className={`mt-1 font-[Manrope] text-base font-bold ${theme.value}`}>
-            {weather.rainfall > 0 ? `${weather.rainfall}mm` : weather.rainExpected ? "Likely" : "0mm"}
+            {weather.rainfall > 0
+              ? `${weather.rainfall}mm`
+              : weather.rainExpected
+                ? t("likely")
+                : "0mm"}
           </p>
         </div>
-        <div className={`rounded-2xl px-2.5 py-3 ring-1 backdrop-blur-sm ${theme.panel}`}>
+        <div
+          className={`rounded-2xl px-2.5 py-3 ring-1 backdrop-blur-sm ${theme.panel}`}
+        >
           <div className={`flex items-center gap-1 text-[10px] ${theme.muted}`}>
             <Wind size={12} />
-            Wind
+            {t("wind")}
           </div>
           <p className={`mt-1 font-[Manrope] text-base font-bold ${theme.value}`}>
             {weather.windSpeed}

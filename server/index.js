@@ -12,6 +12,7 @@ const authRoutes = require("./routes/auth.routes");
 const historyRoutes = require("./routes/history");
 const assistantRoutes = require("./routes/assistant");
 const weatherRoutes = require("./routes/weather");
+const translateRoutes = require("./routes/translate");
 
 if (!process.env.JWT_SECRET) {
   console.error(
@@ -35,6 +36,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/history", historyRoutes);
 app.use("/api/assistant", assistantRoutes);
 app.use("/api/weather", weatherRoutes);
+app.use("/api/translate", translateRoutes);
 
 const PORT = process.env.PORT || 5000;
 

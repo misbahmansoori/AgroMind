@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import { useLanguage } from "../../context/LanguageContext";
 
 const PredictionCard = ({ report, weather }) => {
-  const label = "Disease Risk";
+  const { t, severityLabel } = useLanguage();
 
-  // Blend latest scan severity with live weather humidity risk when available
   const weatherBump =
     weather?.riskLevel === "High" ? 15 : weather?.riskLevel === "Medium" ? 8 : 0;
 
@@ -22,16 +22,25 @@ const PredictionCard = ({ report, weather }) => {
 
   const risk = Math.min(100, baseRisk + (report ? weatherBump : 0));
 
-  const level =
-    risk >= 70 ? "High" : risk >= 40 ? "Medium" : report?.severity || weather?.riskLevel || "Low";
+  const levelKey =
+    risk >= 70
+      ? "High"
+      : risk >= 40
+        ? "Medium"
+        : report?.severity || weather?.riskLevel || "Low";
 
   const description = report
-    ? `Latest AI diagnosis indicates ${report.severity.toLowerCase()} disease severity for ${report.cropName}${
-        weather ? ` · humidity ${weather.humidity}%` : ""
-      }.`
+    ? t("predictionWithReport", {
+        severity: severityLabel(report.severity).toLowerCase(),
+        crop: report.cropName,
+        humidity: weather
+          ? t("humidityPart", { value: weather.humidity })
+          : "",
+      })
     : weather?.advice?.[0] ||
       weather?.insight ||
-      "Based on humidity, rainfall, and recent field history.";
+      t("predictionFallback");
+
   const ring = Math.min(100, Math.max(0, risk));
   const [display, setDisplay] = useState(0);
   const circumference = 2 * Math.PI * 44;
@@ -49,10 +58,10 @@ const PredictionCard = ({ report, weather }) => {
     const duration = 900;
 
     const tick = (now) => {
-      const t = Math.min(1, (now - start) / duration);
-      const eased = 1 - Math.pow(1 - t, 3);
+      const progress = Math.min(1, (now - start) / duration);
+      const eased = 1 - Math.pow(1 - progress, 3);
       setDisplay(Math.round(ring * eased));
-      if (t < 1) frame = requestAnimationFrame(tick);
+      if (progress < 1) frame = requestAnimationFrame(tick);
     };
 
     frame = requestAnimationFrame(tick);
@@ -62,12 +71,12 @@ const PredictionCard = ({ report, weather }) => {
   return (
     <article className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-[#dce8dc] bg-white p-5 shadow-[0_4px_20px_rgba(15,40,20,0.03)] transition-all duration-300 hover:-translate-y-1 hover:border-green-300 hover:shadow-[0_18px_40px_rgba(46,125,50,0.1)]">
       <div className="relative flex items-center justify-between">
-        <p className="text-sm font-medium text-gray-500">{label}</p>
+        <p className="text-sm font-medium text-gray-500">{t("diseaseRisk")}</p>
         <span
           className={`rounded-lg px-2.5 py-1 text-xs font-semibold ${tone.text}`}
           style={{ backgroundColor: tone.soft }}
         >
-          {level}
+          {severityLabel(levelKey)}
         </span>
       </div>
 
@@ -107,7 +116,7 @@ const PredictionCard = ({ report, weather }) => {
             <p className="font-[Manrope] text-3xl font-extrabold text-gray-900">
               {display}%
             </p>
-            <p className="text-[11px] text-gray-500">chance</p>
+            <p className="text-[11px] text-gray-500">{t("chance")}</p>
           </div>
         </div>
 
