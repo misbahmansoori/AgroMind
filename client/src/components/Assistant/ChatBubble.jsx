@@ -1,3 +1,5 @@
+import { Volume2 } from "lucide-react";
+
 const formatInline = (text) => {
   // Turn **bold** into <strong>
   const parts = String(text).split(/(\*\*[^*]+\*\*)/g);
@@ -71,7 +73,10 @@ const renderAiContent = (text) => {
     }
 
     blocks.push(
-      <p key={`p-${index}`} className="mb-2 text-[15px] leading-7 text-gray-700 last:mb-0">
+      <p
+        key={`p-${index}`}
+        className="mb-2 text-[15px] leading-7 text-gray-700 last:mb-0"
+      >
         {formatInline(line)}
       </p>,
     );
@@ -81,7 +86,7 @@ const renderAiContent = (text) => {
   return blocks;
 };
 
-const ChatBubble = ({ sender, text }) => {
+const ChatBubble = ({ sender, text, onSpeak, speaking }) => {
   const isUser = sender === "user";
 
   return (
@@ -102,7 +107,23 @@ const ChatBubble = ({ sender, text }) => {
         {isUser ? (
           <p className="whitespace-pre-wrap">{text}</p>
         ) : (
-          <div className="ai-reply">{renderAiContent(text)}</div>
+          <>
+            <div className="ai-reply">{renderAiContent(text)}</div>
+            {onSpeak && (
+              <button
+                type="button"
+                onClick={() => onSpeak(text)}
+                className={`mt-3 inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium transition ${
+                  speaking
+                    ? "bg-green-700 text-white"
+                    : "bg-green-50 text-green-800 hover:bg-green-100"
+                }`}
+              >
+                <Volume2 size={14} />
+                {speaking ? "Speaking…" : "Play voice"}
+              </button>
+            )}
+          </>
         )}
       </div>
     </div>
