@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import {  Routes, Route } from "react-router-dom";
 
 import MainLayout from "../layouts/MainLayout";
 import Landing from "../pages/Landing/Landing";
@@ -18,7 +18,7 @@ import History from "../pages/History/History";
 
 function AppRoutes() {
   return (
-    <BrowserRouter>
+    
       <Routes>
         <Route
           path="/"
@@ -76,7 +76,7 @@ function AppRoutes() {
 
         <Route path="/history" element={<History />} />
       </Routes>
-    </BrowserRouter>
+    
   );
 }
 
