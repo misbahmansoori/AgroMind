@@ -17,6 +17,7 @@ const Navbar = () => {
     "/result",
     "/profile",
     "/history",
+    "/assistant",
   ].includes(pathname);
 
   const renderCta = () => {
@@ -112,7 +113,6 @@ const Navbar = () => {
                 </>
               ) : (
                 <>
-                <Link to="/history">History</Link>
                   <Link
                     to="/dashboard"
                     className={`transition-colors hover:text-green-700 ${
@@ -128,6 +128,22 @@ const Navbar = () => {
                     }`}
                   >
                     Scan Crop
+                  </Link>
+                  <Link
+                    to="/history"
+                    className={`transition-colors hover:text-green-700 ${
+                      pathname === "/history" ? "text-green-700" : ""
+                    }`}
+                  >
+                    History
+                  </Link>
+                  <Link
+                    to="/assistant"
+                    className={`transition-colors hover:text-green-700 ${
+                      pathname === "/assistant" ? "text-green-700" : ""
+                    }`}
+                  >
+                    Assistant
                   </Link>
                   <Link
                     to="/"
