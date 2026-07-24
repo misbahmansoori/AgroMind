@@ -5,6 +5,11 @@ import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 
 import api from "../../api/axios";
+import { getWeather } from "../../services/weatherService";
+import {
+  detectFarmerLocation,
+  profileCity,
+} from "../../utils/location";
 import { useAuth } from "../../context/AuthContext";
 import Container from "../../components/common/Container";
 import Button from "../../components/common/Button";
@@ -24,16 +29,40 @@ const fadeUp = {
   }),
 };
 
+async function loadLiveWeather(user) {
+  // 1) Prefer browser GPS so we never hardcode a city
+  try {
+    const { lat, lon } = await detectFarmerLocation();
+    const data = await getWeather({ lat, lon });
+    if (data?.success && data.weather) return data.weather;
+  } catch (err) {
+    console.warn("GPS weather unavailable:", err?.message || err);
+  }
+
+  // 2) Fallback to profile district/state/village
+  const city = profileCity(user);
+  if (city) {
+    const data = await getWeather({ city });
+    if (data?.success && data.weather) {
+      return { ...data.weather, source: "profile" };
+    }
+  }
+
+  return null;
+}
+
 const Dashboard = () => {
   const { user } = useAuth();
   const displayName = user?.name?.split(" ")[0] || "Farmer";
+  const navigate = useNavigate();
 
   const [history, setHistory] = useState([]);
+  const [weather, setWeather] = useState(null);
+  const [weatherLoading, setWeatherLoading] = useState(true);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const latestScan = history[0];
 
-  const navigate = useNavigate();
+  const latestScan = history[0];
 
   const todayScans = history.filter((item) => {
     const today = new Date().toDateString();
@@ -48,13 +77,24 @@ const Dashboard = () => {
         : 95
     : 100;
 
-  const fetchHistory = async () => {
+  const fetchDashboard = async () => {
     try {
       setLoading(true);
       setError("");
 
-      const response = await api.get("/history", { params: { limit: 10 } });
-      setHistory(response.data.data || []);
+      const historyPromise = api.get("/history", { params: { limit: 10 } });
+
+      setWeatherLoading(true);
+      const weatherPromise = loadLiveWeather(user)
+        .then((live) => setWeather(live))
+        .catch((err) => {
+          console.error("Weather fetch failed:", err);
+          setWeather(null);
+        })
+        .finally(() => setWeatherLoading(false));
+
+      const [historyRes] = await Promise.all([historyPromise, weatherPromise]);
+      setHistory(historyRes.data.data || []);
     } catch (err) {
       console.error(err);
       setError("Unable to load dashboard.");
@@ -64,8 +104,9 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
-    fetchHistory();
-  }, []);
+    fetchDashboard();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?.district, user?.state, user?.village]);
 
   if (loading) {
     return (
@@ -87,7 +128,7 @@ const Dashboard = () => {
           </h2>
           <p className="mt-2 text-gray-600">Please try again.</p>
           <button
-            onClick={fetchHistory}
+            onClick={fetchDashboard}
             className="mt-4 rounded-lg bg-green-600 px-4 py-2 text-white hover:bg-green-700"
           >
             Retry
@@ -97,28 +138,31 @@ const Dashboard = () => {
     );
   }
 
-  if (!loading && history.length === 0) {
+  if (history.length === 0) {
     return (
       <section className="page-atmosphere relative min-h-screen overflow-hidden pb-16 pt-32">
         <Container>
-          <div className="mx-auto max-w-lg rounded-[28px] border border-dashed border-green-300 bg-white/90 p-8 text-center shadow-sm">
-            <p className="font-[Manrope] text-sm font-semibold uppercase tracking-[0.24em] text-green-700">
-              Your farm
-            </p>
-            <h2 className="mt-3 font-[Manrope] text-2xl font-extrabold text-gray-900">
-              Welcome, {displayName}
-            </h2>
-            <p className="mt-3 text-gray-600">
-              You have not analyzed any crops yet. Upload your first crop image
-              to receive an AI-powered diagnosis — it will appear only on your
-              dashboard.
-            </p>
-            <button
-              onClick={() => navigate("/detect")}
-              className="mt-6 rounded-xl bg-green-700 px-6 py-3 font-semibold text-white transition hover:bg-green-800"
-            >
-              Scan Your First Crop
-            </button>
+          <div className="mx-auto grid max-w-4xl gap-6 lg:grid-cols-2">
+            <div className="rounded-[28px] border border-dashed border-green-300 bg-white/90 p-8 text-center shadow-sm lg:text-left">
+              <p className="font-[Manrope] text-sm font-semibold uppercase tracking-[0.24em] text-green-700">
+                Your farm
+              </p>
+              <h2 className="mt-3 font-[Manrope] text-2xl font-extrabold text-gray-900">
+                Welcome, {displayName}
+              </h2>
+              <p className="mt-3 text-gray-600">
+                You have not analyzed any crops yet. Upload your first crop image
+                to receive an AI-powered diagnosis — weather for your area is
+                already live below.
+              </p>
+              <button
+                onClick={() => navigate("/detect")}
+                className="mt-6 rounded-xl bg-green-700 px-6 py-3 font-semibold text-white transition hover:bg-green-800"
+              >
+                Scan Your First Crop
+              </button>
+            </div>
+            <WeatherCard weather={weather} loading={weatherLoading} />
           </div>
         </Container>
       </section>
@@ -169,6 +213,14 @@ const Dashboard = () => {
                     {todayScans} scans today
                   </span>
                 </div>
+                {weather && (
+                  <div className="rounded-xl bg-white/90 px-3.5 py-2 ring-1 ring-[#dce8dc]">
+                    <span className="text-gray-500">Weather</span>{" "}
+                    <span className="font-bold text-green-700">
+                      {weather.temperature}°C · {weather.condition}
+                    </span>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -199,7 +251,7 @@ const Dashboard = () => {
             animate="visible"
             className="lg:col-span-3"
           >
-            <WeatherCard />
+            <WeatherCard weather={weather} loading={weatherLoading} />
           </motion.div>
           <motion.div
             custom={2}
@@ -208,7 +260,7 @@ const Dashboard = () => {
             animate="visible"
             className="lg:col-span-4"
           >
-            <PredictionCard report={latestScan} />
+            <PredictionCard report={latestScan} weather={weather} />
           </motion.div>
           <motion.div
             custom={3}
@@ -217,7 +269,7 @@ const Dashboard = () => {
             animate="visible"
             className="lg:col-span-7"
           >
-            <ReportCard report={latestScan} />
+            <ReportCard report={latestScan} weather={weather} />
           </motion.div>
           <motion.div
             custom={4}
