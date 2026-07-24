@@ -11,9 +11,13 @@ const Navbar = () => {
   const isLanding = pathname === "/";
   const isDashboard = pathname === "/dashboard";
   const isAuth = pathname === "/auth";
-  const isApp = ["/dashboard", "/detect", "/result", "/profile"].includes(
-    pathname,
-  );
+  const isApp = [
+    "/dashboard",
+    "/detect",
+    "/result",
+    "/profile",
+    "/history",
+  ].includes(pathname);
 
   const renderCta = () => {
     // Landing → account entry (not diagnosis)

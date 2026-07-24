@@ -7,11 +7,8 @@ dotenv.config();
 
 const connectDB = require("./config/db");
 const detectRoutes = require("./routes/detect");
-
-const authRoutes=require("./routes/auth.routes");
-
+const authRoutes = require("./routes/auth.routes");
 const historyRoutes = require("./routes/history");
-
 
 const app = express();
 
@@ -25,9 +22,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/detect", detectRoutes);
-
-app.use("/api/auth",authRoutes);
-=======
+app.use("/api/auth", authRoutes);
 app.use("/api/history", historyRoutes);
 
 const PORT = process.env.PORT || 5000;
