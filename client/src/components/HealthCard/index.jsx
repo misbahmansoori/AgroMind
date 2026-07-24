@@ -1,23 +1,23 @@
 import { useEffect, useState } from "react";
 import { Leaf } from "lucide-react";
 import { motion } from "framer-motion";
+import { useLanguage } from "../../context/LanguageContext";
 
 const HealthCard = ({ report }) => {
+  const { t, severityLabel } = useLanguage();
+
   const score = report
-  ? report.severity === "High"
-    ? 40
-    : report.severity === "Medium"
-    ? 70
-    : 95
-  : 86;
+    ? report.severity === "High"
+      ? 40
+      : report.severity === "Medium"
+        ? 70
+        : 95
+    : 86;
 
-const status = report ? report.severity : "Good";
+  const status = report ? severityLabel(report.severity) : t("good");
+  const crop = report ? report.cropName : t("defaultCrop");
+  const description = report ? report.explanation : t("healthFallbackDesc");
 
-const crop = report ? report.cropName : "Tomato · Field A";
-
-const description = report
-  ? report.explanation
-  : "Leaves look stable. Continue weekly scans to stay ahead of fungal risk.";
   const ring = Math.min(100, Math.max(0, score));
   const [display, setDisplay] = useState(0);
   const circumference = 2 * Math.PI * 40;
@@ -28,24 +28,22 @@ const description = report
     const duration = 900;
 
     const tick = (now) => {
-      const t = Math.min(1, (now - start) / duration);
-      const eased = 1 - Math.pow(1 - t, 3);
+      const progress = Math.min(1, (now - start) / duration);
+      const eased = 1 - Math.pow(1 - progress, 3);
       setDisplay(Math.round(ring * eased));
-      if (t < 1) frame = requestAnimationFrame(tick);
+      if (progress < 1) frame = requestAnimationFrame(tick);
     };
 
     frame = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(frame);
   }, [ring]);
 
-
-
   return (
     <article className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-[#dce8dc] bg-white p-5 shadow-[0_4px_20px_rgba(15,40,20,0.03)] transition-all duration-300 hover:-translate-y-1 hover:border-green-300 hover:shadow-[0_18px_40px_rgba(46,125,50,0.1)]">
       <div className="pointer-events-none absolute -right-8 -top-8 h-28 w-28 rounded-full bg-green-100/60 blur-2xl transition-opacity group-hover:opacity-100" />
 
       <div className="relative flex items-center justify-between">
-        <p className="text-sm font-medium text-gray-500">Crop Health</p>
+        <p className="text-sm font-medium text-gray-500">{t("cropHealth")}</p>
         <span className="inline-flex items-center gap-1 rounded-lg bg-[#eaf5ea] px-2.5 py-1 text-xs font-semibold text-green-700">
           <Leaf size={12} />
           {status}
@@ -91,7 +89,7 @@ const description = report
 
         <div>
           <p className="font-[Manrope] text-lg font-bold text-gray-900">
-            Farm Health Score
+            {t("farmHealthScore")}
           </p>
           <p className="mt-1 text-sm text-gray-500">{crop}</p>
           <p className="mt-3 text-sm leading-6 text-gray-600">{description}</p>

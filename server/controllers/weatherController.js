@@ -1,62 +1,103 @@
 const axios = require("axios");
 
-function buildFarmAdvice({
-  humidity,
-  temperature,
-  rainfallMm,
-  windKmh,
-  condition,
-  rainExpected,
-}) {
+const TIP_CATALOG = {
+  highHumidity: {
+    en: "High humidity today. Monitor crops for fungal diseases.",
+    hi: "आज नमी बहुत अधिक है। फसलों में फफूंद रोगों की निगरानी करें।",
+  },
+  elevatedHumidity: {
+    en: "Humidity is elevated. Watch leaves for early fungal spots.",
+    hi: "नमी बढ़ी हुई है। पत्तियों पर फफूंद के शुरुआती धब्बे देखें।",
+  },
+  rainExpected: {
+    en: "Rain expected. Delay pesticide spraying.",
+    hi: "बारिश की संभावना है। कीटनाशक छिड़काव टाल दें।",
+  },
+  recentRain: {
+    en: "Recent rain detected. Check field drainage to reduce root-rot risk.",
+    hi: "हाल में बारिश हुई है। जड़ सड़न से बचने के लिए जल निकासी जाँचें।",
+  },
+  highTemp: {
+    en: "High temperature today. Irrigate carefully and avoid midday spraying.",
+    hi: "आज तापमान अधिक है। सावधानी से सिंचाई करें और दोपहर में छिड़काव न करें।",
+  },
+  coolWeather: {
+    en: "Cool weather today. Protect tender seedlings from cold stress.",
+    hi: "आज मौसम ठंडा है। कोमल पौधों को ठंड से बचाएँ।",
+  },
+  strongWind: {
+    en: "Strong wind today. Avoid pesticide spraying until wind settles.",
+    hi: "आज तेज़ हवा है। हवा शांत होने तक छिड़काव न करें।",
+  },
+  thunder: {
+    en: "Thunderstorm risk. Keep farm workers and equipment sheltered.",
+    hi: "आंधी-तूफान का खतरा। मजदूरों और उपकरणों को सुरक्षित रखें।",
+  },
+  manageable: {
+    en: "Weather looks manageable. Keep routine crop monitoring.",
+    hi: "मौसम सामान्य है। नियमित फसल निगरानी जारी रखें।",
+  },
+};
+
+function tip(key, lang = "en") {
+  const entry = TIP_CATALOG[key];
+  if (!entry) return key;
+  return entry[lang] || entry.en;
+}
+
+function buildFarmAdvice(
+  { humidity, temperature, rainfallMm, windKmh, condition, rainExpected },
+  lang = "en",
+) {
   const tips = [];
   let riskLevel = "Low";
+  const L = lang === "hi" ? "hi" : "en";
 
   const cond = (condition || "").toLowerCase();
 
   if (humidity >= 80) {
     riskLevel = "High";
-    tips.push(
-      "High humidity today. Monitor crops for fungal diseases.",
-    );
+    tips.push(tip("highHumidity", L));
   } else if (humidity >= 70) {
     riskLevel = "Medium";
-    tips.push(
-      "Humidity is elevated. Watch leaves for early fungal spots.",
-    );
+    tips.push(tip("elevatedHumidity", L));
   }
 
-  if (rainExpected || rainfallMm > 1 || cond.includes("rain") || cond.includes("drizzle")) {
+  if (
+    rainExpected ||
+    rainfallMm > 1 ||
+    cond.includes("rain") ||
+    cond.includes("drizzle")
+  ) {
     if (riskLevel === "Low") riskLevel = "Medium";
-    tips.push("Rain expected. Delay pesticide spraying.");
+    tips.push(tip("rainExpected", L));
   }
 
   if (rainfallMm > 3) {
     if (riskLevel === "Low") riskLevel = "Medium";
-    tips.push("Recent rain detected. Check field drainage to reduce root-rot risk.");
+    tips.push(tip("recentRain", L));
   }
 
   if (temperature >= 35) {
     if (riskLevel === "Low") riskLevel = "Medium";
-    tips.push(
-      "High temperature today. Irrigate carefully and avoid midday spraying.",
-    );
+    tips.push(tip("highTemp", L));
   } else if (temperature <= 10) {
     if (riskLevel === "Low") riskLevel = "Medium";
-    tips.push("Cool weather today. Protect tender seedlings from cold stress.");
+    tips.push(tip("coolWeather", L));
   }
 
   if (windKmh >= 25) {
     if (riskLevel === "Low") riskLevel = "Medium";
-    tips.push("Strong wind today. Avoid pesticide spraying until wind settles.");
+    tips.push(tip("strongWind", L));
   }
 
   if (cond.includes("thunder")) {
     riskLevel = "High";
-    tips.push("Thunderstorm risk. Keep farm workers and equipment sheltered.");
+    tips.push(tip("thunder", L));
   }
 
   if (tips.length === 0) {
-    tips.push("Weather looks manageable. Keep routine crop monitoring.");
+    tips.push(tip("manageable", L));
   }
 
   return {
@@ -68,9 +109,10 @@ function buildFarmAdvice({
 
 async function fetchRainExpected(lat, lon, city, apiKey) {
   try {
-    const base = lat != null && lon != null
-      ? `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}`
-      : `https://api.openweathermap.org/data/2.5/forecast?q=${encodeURIComponent(city)}`;
+    const base =
+      lat != null && lon != null
+        ? `https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}`
+        : `https://api.openweathermap.org/data/2.5/forecast?q=${encodeURIComponent(city)}`;
 
     const { data } = await axios.get(
       `${base}&appid=${apiKey}&units=metric&cnt=8`,
@@ -80,7 +122,12 @@ async function fetchRainExpected(lat, lon, city, apiKey) {
       const pop = slot.pop || 0;
       const rain = slot.rain?.["3h"] || 0;
       const main = (slot.weather?.[0]?.main || "").toLowerCase();
-      return pop >= 0.4 || rain > 0 || main.includes("rain") || main.includes("drizzle");
+      return (
+        pop >= 0.4 ||
+        rain > 0 ||
+        main.includes("rain") ||
+        main.includes("drizzle")
+      );
     });
   } catch {
     return false;
@@ -89,7 +136,8 @@ async function fetchRainExpected(lat, lon, city, apiKey) {
 
 const getWeather = async (req, res) => {
   try {
-    const { city, lat, lon } = req.query;
+    const { city, lat, lon, lang } = req.query;
+    const uiLang = lang === "hi" ? "hi" : "en";
     const hasCoords = lat != null && lon != null && lat !== "" && lon !== "";
 
     if (!hasCoords && !city) {
@@ -131,14 +179,17 @@ const getWeather = async (req, res) => {
       apiKey,
     );
 
-    const { riskLevel, insight, advice } = buildFarmAdvice({
-      humidity,
-      temperature,
-      rainfallMm,
-      windKmh,
-      condition,
-      rainExpected,
-    });
+    const { riskLevel, insight, advice } = buildFarmAdvice(
+      {
+        humidity,
+        temperature,
+        rainfallMm,
+        windKmh,
+        condition,
+        rainExpected,
+      },
+      uiLang,
+    );
 
     res.status(200).json({
       success: true,

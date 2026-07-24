@@ -1,3 +1,5 @@
+import { useLanguage } from "../../context/LanguageContext";
+
 const defaultEvents = [
   {
     id: 1,
@@ -29,34 +31,40 @@ const toneClass = {
 };
 
 const TimelineCard = ({ events = [] }) => {
+  const { t, severityLabel, lang } = useLanguage();
+
   const timelineEvents =
     events.length > 0
       ? events.map((item) => ({
           id: item._id,
           crop: item.cropName,
-          result: `${item.diseaseName} • ${item.severity}`,
+          result: `${item.diseaseName} • ${severityLabel(item.severity)}`,
           tone:
             item.severity === "High"
               ? "bad"
               : item.severity === "Medium"
                 ? "warn"
                 : "good",
-          date: new Date(item.detectedOn).toLocaleString("en-IN", {
-            day: "numeric",
-            month: "short",
-            hour: "numeric",
-            minute: "2-digit",
-          }),
+          date: new Date(item.detectedOn).toLocaleString(
+            lang === "hi" ? "hi-IN" : "en-IN",
+            {
+              day: "numeric",
+              month: "short",
+              hour: "numeric",
+              minute: "2-digit",
+            },
+          ),
         }))
       : defaultEvents;
+
   return (
     <article className="flex h-full flex-col rounded-2xl border border-[#dce8dc] bg-white p-5 shadow-[0_4px_20px_rgba(15,40,20,0.03)] transition-all duration-300 hover:-translate-y-1 hover:border-green-300 hover:shadow-[0_18px_40px_rgba(46,125,50,0.1)]">
       <div className="flex items-center justify-between">
         <p className="text-sm font-medium text-gray-500">
-          Crop Health Timeline
+          {t("cropHealthTimeline")}
         </p>
         <span className="text-xs font-medium text-green-700">
-          {`${timelineEvents.length} recent scans`}
+          {`${timelineEvents.length} ${t("recentScans")}`}
         </span>
       </div>
 
