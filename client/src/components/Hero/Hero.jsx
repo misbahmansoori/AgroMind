@@ -30,21 +30,21 @@ const Hero = () => {
         <img
           src={heroImage}
           alt="Farmer reviewing crop insights in the field"
-          className="h-full w-full object-cover object-[68%_center]"
+          className="h-full w-full object-cover object-[72%_center] sm:object-[68%_center]"
         />
       </motion.div>
 
-      <div className="absolute inset-0 bg-gradient-to-r from-[#08140a]/88 via-[#0d1f10]/55 to-transparent" />
-      <div className="absolute inset-0 bg-gradient-to-t from-[#08140a]/70 via-transparent to-[#08140a]/25" />
+      <div className="absolute inset-0 bg-gradient-to-r from-[#08140a]/90 via-[#0d1f10]/65 to-[#08140a]/35 sm:via-[#0d1f10]/55 sm:to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-t from-[#08140a]/75 via-transparent to-[#08140a]/30" />
 
-      <Container className="relative z-10 flex min-h-screen flex-col justify-center pb-16 pt-32">
+      <Container className="relative z-10 flex min-h-[100svh] flex-col justify-center pb-14 pt-28 sm:pb-16 sm:pt-32">
         <div className="max-w-2xl">
           <motion.p
             custom={0.15}
             variants={fadeUp}
             initial="hidden"
             animate="visible"
-            className="font-[Manrope] text-sm font-semibold uppercase tracking-[0.28em] text-[#9fd4a3]"
+            className="font-[Manrope] text-xs font-semibold uppercase tracking-[0.28em] text-[#9fd4a3] sm:text-sm"
           >
             AgroMind
           </motion.p>
@@ -54,7 +54,7 @@ const Hero = () => {
             variants={fadeUp}
             initial="hidden"
             animate="visible"
-            className="mt-5 font-[Manrope] text-5xl font-extrabold leading-[1.05] tracking-tight text-white sm:text-6xl lg:text-7xl"
+            className="mt-4 font-[Manrope] text-[2.15rem] font-extrabold leading-[1.08] tracking-tight text-white sm:mt-5 sm:text-5xl md:text-6xl lg:text-7xl"
           >
             Protect every harvest with smarter farming.
           </motion.h1>
@@ -64,7 +64,7 @@ const Hero = () => {
             variants={fadeUp}
             initial="hidden"
             animate="visible"
-            className="mt-6 max-w-lg text-lg leading-8 text-white/75"
+            className="mt-5 max-w-lg text-base leading-7 text-white/80 sm:mt-6 sm:text-lg sm:leading-8 sm:text-white/75"
           >
             Spot crop disease early, understand the cause, and act with
             AI-guided treatment - before the season slips away.
@@ -75,10 +75,13 @@ const Hero = () => {
             variants={fadeUp}
             initial="hidden"
             animate="visible"
-            className="mt-10 flex flex-wrap items-center gap-4"
+            className="mt-8 flex w-full flex-col gap-3 sm:mt-10 sm:w-auto sm:flex-row sm:flex-wrap sm:items-center sm:gap-4"
           >
-            <Link to={isAuthenticated ? "/detect" : "/auth?demo=1"}>
-              <Button className="flex items-center gap-2 px-7 py-4">
+            <Link
+              to={isAuthenticated ? "/detect" : "/auth?demo=1"}
+              className="w-full sm:w-auto"
+            >
+              <Button className="flex w-full items-center justify-center gap-2 px-7 py-4 sm:w-auto">
                 {isAuthenticated ? "Scan Crop" : "Try Demo"}
                 <ArrowRight size={18} />
               </Button>
@@ -91,7 +94,7 @@ const Hero = () => {
                   .getElementById("features")
                   ?.scrollIntoView({ behavior: "smooth" })
               }
-              className="rounded-xl border border-white/25 bg-white/10 px-7 py-4 font-medium text-white backdrop-blur-md transition-all duration-300 hover:border-white/45 hover:bg-white/18"
+              className="w-full rounded-xl border border-white/25 bg-white/10 px-7 py-4 font-medium text-white backdrop-blur-md transition-all duration-300 hover:border-white/45 hover:bg-white/18 sm:w-auto"
             >
               Explore Features
             </button>

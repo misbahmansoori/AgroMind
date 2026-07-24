@@ -120,7 +120,7 @@ export default function History() {
   };
 
   return (
-    <section className="page-atmosphere min-h-screen pb-16 pt-32">
+    <section className="page-atmosphere min-h-screen pb-16 pt-28 sm:pt-32">
       <Container>
         <Link
           to="/dashboard"
@@ -130,38 +130,38 @@ export default function History() {
           Back to Dashboard
         </Link>
 
-        <h1 className="mb-8 font-[Manrope] text-4xl font-bold text-gray-900">
+        <h1 className="mb-6 font-[Manrope] text-3xl font-bold text-gray-900 sm:mb-8 sm:text-4xl">
           Your Crop History
         </h1>
 
-        <div className="mb-8 grid gap-4 md:grid-cols-4">
-          <div className="rounded-2xl border bg-white p-5 shadow-sm flex justify-between">
+        <div className="mb-8 grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-4">
+          <div className="flex justify-between rounded-2xl border bg-white p-4 shadow-sm sm:p-5">
             <div>
-              <p>Total Scans</p>
-              <h2 className="text-3xl font-bold">{totalScans}</h2>
+              <p className="text-sm text-gray-600">Total Scans</p>
+              <h2 className="text-2xl font-bold sm:text-3xl">{totalScans}</h2>
             </div>
-            <HistoryIcon />
+            <HistoryIcon className="hidden text-gray-400 sm:block" />
           </div>
-          <div className="rounded-2xl border bg-green-50 p-5 shadow-sm flex justify-between">
+          <div className="flex justify-between rounded-2xl border bg-green-50 p-4 shadow-sm sm:p-5">
             <div>
-              <p>Low Risk</p>
-              <h2 className="text-3xl font-bold">{lowCount}</h2>
+              <p className="text-sm text-gray-600">Low Risk</p>
+              <h2 className="text-2xl font-bold sm:text-3xl">{lowCount}</h2>
             </div>
-            <ShieldCheck />
+            <ShieldCheck className="hidden text-green-600 sm:block" />
           </div>
-          <div className="rounded-2xl border bg-yellow-50 p-5 shadow-sm flex justify-between">
+          <div className="flex justify-between rounded-2xl border bg-yellow-50 p-4 shadow-sm sm:p-5">
             <div>
-              <p>Medium Risk</p>
-              <h2 className="text-3xl font-bold">{mediumCount}</h2>
+              <p className="text-sm text-gray-600">Medium Risk</p>
+              <h2 className="text-2xl font-bold sm:text-3xl">{mediumCount}</h2>
             </div>
-            <AlertCircle />
+            <AlertCircle className="hidden text-amber-600 sm:block" />
           </div>
-          <div className="rounded-2xl border bg-red-50 p-5 shadow-sm flex justify-between">
+          <div className="flex justify-between rounded-2xl border bg-red-50 p-4 shadow-sm sm:p-5">
             <div>
-              <p>High Risk</p>
-              <h2 className="text-3xl font-bold">{highCount}</h2>
+              <p className="text-sm text-gray-600">High Risk</p>
+              <h2 className="text-2xl font-bold sm:text-3xl">{highCount}</h2>
             </div>
-            <TriangleAlert />
+            <TriangleAlert className="hidden text-red-600 sm:block" />
           </div>
         </div>
 

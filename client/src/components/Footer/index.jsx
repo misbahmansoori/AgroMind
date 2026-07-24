@@ -52,8 +52,8 @@ const socialLinks = [
 const Footer = () => {
   return (
     <footer className="border-t border-[#dce8dc] bg-[#f7faf7]">
-      <Container className="py-14">
-        <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-4">
+      <Container className="py-10 sm:py-14">
+        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
           {/* Brand */}
           <div className="lg:col-span-1">
             <Link to="/" className="inline-flex items-center gap-2">

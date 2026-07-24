@@ -210,23 +210,23 @@ const Dashboard = () => {
 
   if (historyRaw.length === 0) {
     return (
-      <section className="page-atmosphere relative min-h-screen overflow-hidden pb-16 pt-32">
+      <section className="page-atmosphere relative min-h-screen overflow-hidden pb-16 pt-28 sm:pt-32">
         <Container>
           <div className="mb-6 flex justify-end">
             <LanguageToggle />
           </div>
           <div className="mx-auto grid max-w-4xl gap-6 lg:grid-cols-2">
-            <div className="rounded-[28px] border border-dashed border-green-300 bg-white/90 p-8 text-center shadow-sm lg:text-left">
+            <div className="rounded-[28px] border border-dashed border-green-300 bg-white/90 p-6 text-center shadow-sm sm:p-8 lg:text-left">
               <p className="font-[Manrope] text-sm font-semibold uppercase tracking-[0.24em] text-green-700">
                 {t("yourFarm")}
               </p>
-              <h2 className="mt-3 font-[Manrope] text-2xl font-extrabold text-gray-900">
+              <h2 className="mt-3 font-[Manrope] text-xl font-extrabold text-gray-900 sm:text-2xl">
                 {t("welcome")}, {displayName}
               </h2>
-              <p className="mt-3 text-gray-600">{t("emptyBody")}</p>
+              <p className="mt-3 text-sm text-gray-600 sm:text-base">{t("emptyBody")}</p>
               <button
                 onClick={() => navigate("/detect")}
-                className="mt-6 rounded-xl bg-green-700 px-6 py-3 font-semibold text-white transition hover:bg-green-800"
+                className="mt-6 w-full rounded-xl bg-green-700 px-6 py-3 font-semibold text-white transition hover:bg-green-800 sm:w-auto"
               >
                 {t("scanFirstCrop")}
               </button>
@@ -239,7 +239,7 @@ const Dashboard = () => {
   }
 
   return (
-    <section className="page-atmosphere relative min-h-screen overflow-hidden pb-16 pt-32">
+    <section className="page-atmosphere relative min-h-screen overflow-hidden pb-16 pt-28 sm:pt-32">
       <div className="pointer-events-none absolute -right-20 top-24 h-80 w-80 rounded-full bg-green-200/35 blur-3xl" />
       <div className="pointer-events-none absolute -left-16 bottom-10 h-72 w-72 rounded-full bg-emerald-100/60 blur-3xl" />
 
@@ -259,20 +259,20 @@ const Dashboard = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-          className="overflow-hidden rounded-[28px] border border-[#d5e6d5] bg-gradient-to-br from-white via-white to-[#eaf5ea] p-6 shadow-[0_16px_40px_rgba(15,40,20,0.06)] sm:p-8"
+          className="overflow-hidden rounded-[28px] border border-[#d5e6d5] bg-gradient-to-br from-white via-white to-[#eaf5ea] p-5 shadow-[0_16px_40px_rgba(15,40,20,0.06)] sm:p-6 md:p-8"
         >
           <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-            <div>
+            <div className="min-w-0">
               <div className="inline-flex items-center gap-2 rounded-lg bg-white/80 px-3 py-1.5 text-xs font-semibold text-green-700 ring-1 ring-green-100">
                 <span className="live-dot h-2 w-2 rounded-full bg-green-600" />
                 {t("liveFarmStatus")}
               </div>
 
-              <h1 className="mt-4 font-[Manrope] text-3xl font-extrabold tracking-tight text-gray-900 sm:text-4xl">
+              <h1 className="mt-4 font-[Manrope] text-2xl font-extrabold tracking-tight text-gray-900 sm:text-3xl md:text-4xl">
                 {t("welcomeBack")},{" "}
                 <span className="shimmer-text">{displayName}</span>
               </h1>
-              <p className="mt-2 max-w-lg text-gray-600">{t("subtitle")}</p>
+              <p className="mt-2 max-w-lg text-sm text-gray-600 sm:text-base">{t("subtitle")}</p>
 
               <div className="mt-5 flex flex-wrap gap-3 text-sm">
                 <div className="rounded-xl bg-white/90 px-3.5 py-2 ring-1 ring-[#dce8dc]">
@@ -304,8 +304,8 @@ const Dashboard = () => {
               </div>
             </div>
 
-            <Link to="/detect">
-              <Button className="px-6 py-3.5">
+            <Link to="/detect" className="w-full lg:w-auto">
+              <Button className="w-full justify-center px-6 py-3.5 lg:w-auto">
                 <ScanSearch size={18} />
                 {t("uploadCropPhoto")}
                 <ArrowRight size={18} />

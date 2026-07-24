@@ -50,7 +50,7 @@ const HealthCard = ({ report }) => {
         </span>
       </div>
 
-      <div className="relative mt-6 flex flex-1 items-center gap-5">
+      <div className="relative mt-6 flex flex-1 flex-col items-center gap-5 sm:flex-row sm:items-center">
         <div className="relative grid h-24 w-24 shrink-0 place-items-center">
           <svg
             className="-rotate-90"
@@ -87,7 +87,7 @@ const HealthCard = ({ report }) => {
           </span>
         </div>
 
-        <div>
+        <div className="min-w-0 text-center sm:text-left">
           <p className="font-[Manrope] text-lg font-bold text-gray-900">
             {t("farmHealthScore")}
           </p>

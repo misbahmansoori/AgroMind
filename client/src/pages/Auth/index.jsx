@@ -192,14 +192,14 @@ export default function Auth() {
             </div>
           </div>
 
-          <div className="flex flex-col justify-center p-8 sm:p-10 lg:p-12">
-            <div className="mb-8 md:hidden">
+          <div className="flex flex-col justify-center p-5 sm:p-8 md:p-10 lg:p-12">
+            <div className="mb-6 md:hidden sm:mb-8">
               <p className="font-[Manrope] text-sm font-semibold uppercase tracking-[0.24em] text-green-700">
                 AgroMind
               </p>
             </div>
 
-            <div className="mb-8 flex rounded-xl border border-[#dce8dc] bg-[#f3f8f3] p-1">
+            <div className="mb-6 flex rounded-xl border border-[#dce8dc] bg-[#f3f8f3] p-1 sm:mb-8">
               <button
                 type="button"
                 onClick={() => {
@@ -230,10 +230,10 @@ export default function Auth() {
               </button>
             </div>
 
-            <h2 className="font-[Manrope] text-3xl font-extrabold tracking-tight text-gray-900">
+            <h2 className="font-[Manrope] text-2xl font-extrabold tracking-tight text-gray-900 sm:text-3xl">
               {isLogin ? "Welcome back" : "Create your account"}
             </h2>
-            <p className="mt-2 text-base leading-7 text-gray-600">
+            <p className="mt-2 text-sm leading-7 text-gray-600 sm:text-base">
               {isLogin
                 ? "Sign in to open your farm dashboard."
                 : "Register to start diagnosing crops with AgroMind."}

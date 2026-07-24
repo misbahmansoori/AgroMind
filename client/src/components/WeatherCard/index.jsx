@@ -180,7 +180,7 @@ const WeatherCard = ({ weather, loading = false }) => {
 
       <div className="relative mt-4">
         <p
-          className={`font-[Manrope] text-5xl font-extrabold tracking-tight ${theme.value}`}
+          className={`font-[Manrope] text-4xl font-extrabold tracking-tight sm:text-5xl ${theme.value}`}
         >
           {weather.temperature}°
           <span className="text-2xl font-bold opacity-80">C</span>

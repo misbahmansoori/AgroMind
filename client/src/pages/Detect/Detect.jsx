@@ -49,7 +49,7 @@ const Detect = () => {
   };
 
   return (
-    <section className="page-atmosphere relative min-h-screen overflow-hidden pb-16 pt-32">
+    <section className="page-atmosphere relative min-h-screen overflow-hidden pb-16 pt-28 sm:pt-32">
       <div className="pointer-events-none absolute left-1/2 top-28 h-72 w-72 -translate-x-1/2 rounded-full bg-green-200/40 blur-3xl" />
 
       <Container className="relative">
@@ -62,10 +62,10 @@ const Detect = () => {
           <p className="font-[Manrope] text-sm font-semibold uppercase tracking-[0.24em] text-green-700">
             AI Disease Detection
           </p>
-          <h1 className="mt-2 font-[Manrope] text-3xl font-extrabold tracking-tight text-gray-900 sm:text-4xl">
+          <h1 className="mt-2 font-[Manrope] text-2xl font-extrabold tracking-tight text-gray-900 sm:text-3xl md:text-4xl">
             Upload a crop photo
           </h1>
-          <p className="mt-3 text-lg leading-8 text-gray-600">
+          <p className="mt-3 text-base leading-7 text-gray-600 sm:text-lg sm:leading-8">
             Take a clear leaf photo. AgroMind will detect disease and suggest
             treatment.
           </p>
@@ -75,7 +75,7 @@ const Detect = () => {
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.12, duration: 0.55 }}
-          className="mx-auto mt-10 max-w-xl rounded-[28px] border border-[#dce8dc] bg-white/90 p-8 text-center shadow-[0_20px_50px_rgba(15,40,20,0.08)] backdrop-blur-sm"
+          className="mx-auto mt-8 max-w-xl rounded-[28px] border border-[#dce8dc] bg-white/90 p-5 text-center shadow-[0_20px_50px_rgba(15,40,20,0.08)] backdrop-blur-sm sm:mt-10 sm:p-8"
         >
           <label className="block cursor-pointer">
             <input

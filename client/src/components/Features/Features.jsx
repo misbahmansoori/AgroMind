@@ -35,7 +35,7 @@ const Features = () => {
   return (
     <section
       id="features"
-      className="relative overflow-hidden bg-[#f4faf4] py-24"
+      className="relative overflow-hidden bg-[#f4faf4] py-16 sm:py-20 lg:py-24"
     >
       <div className="pointer-events-none absolute -right-24 top-10 h-72 w-72 rounded-full bg-green-200/40 blur-3xl" />
       <div className="pointer-events-none absolute -left-16 bottom-0 h-64 w-64 rounded-full bg-emerald-100/60 blur-3xl" />

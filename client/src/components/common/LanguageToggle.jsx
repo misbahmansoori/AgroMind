@@ -18,24 +18,26 @@ const LanguageToggle = ({ className = "" }) => {
       <button
         type="button"
         onClick={() => setLang("en")}
-        className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition ${
+        className={`rounded-lg px-2.5 py-1.5 text-xs font-semibold transition sm:px-3 ${
           lang === "en"
             ? "bg-green-700 text-white shadow-sm"
             : "text-gray-600 hover:bg-green-50"
         }`}
       >
-        English
+        <span className="sm:hidden">EN</span>
+        <span className="hidden sm:inline">English</span>
       </button>
       <button
         type="button"
         onClick={() => setLang("hi")}
-        className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition ${
+        className={`rounded-lg px-2.5 py-1.5 text-xs font-semibold transition sm:px-3 ${
           lang === "hi"
             ? "bg-green-700 text-white shadow-sm"
             : "text-gray-600 hover:bg-green-50"
         }`}
       >
-        हिंदी
+        <span className="sm:hidden">हिं</span>
+        <span className="hidden sm:inline">हिंदी</span>
       </button>
     </div>
   );

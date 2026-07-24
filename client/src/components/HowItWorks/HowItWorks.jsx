@@ -45,7 +45,7 @@ const HowItWorks = () => {
   return (
     <section
       id="how-it-works"
-      className="relative overflow-hidden bg-[#f4faf4] py-24"
+      className="relative overflow-hidden bg-[#f4faf4] py-16 sm:py-20 lg:py-24"
     >
       <Container>
         <motion.div

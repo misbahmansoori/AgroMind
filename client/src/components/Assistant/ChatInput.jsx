@@ -35,7 +35,7 @@ const ChatInput = ({
           onKeyDown={(e) => {
             if (e.key === "Enter" && !loading && !listening) onSend();
           }}
-          className="flex-1 rounded-xl border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-green-500 disabled:cursor-not-allowed disabled:bg-gray-100"
+          className="flex-1 min-w-0 rounded-xl border border-gray-300 px-3 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-green-500 disabled:cursor-not-allowed disabled:bg-gray-100 sm:px-4 sm:text-base"
         />
 
         {micSupported && (
@@ -45,7 +45,7 @@ const ChatInput = ({
             disabled={loading}
             title={listening ? "Stop listening" : "Speak your question"}
             aria-label={listening ? "Stop listening" : "Start voice input"}
-            className={`inline-flex h-[50px] w-[50px] shrink-0 items-center justify-center rounded-xl transition disabled:cursor-not-allowed disabled:bg-gray-300 ${
+            className={`inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl transition disabled:cursor-not-allowed disabled:bg-gray-300 sm:h-[50px] sm:w-[50px] ${
               listening
                 ? "bg-red-600 text-white hover:bg-red-700"
                 : "border border-green-200 bg-green-50 text-green-800 hover:bg-green-100"
@@ -59,7 +59,7 @@ const ChatInput = ({
           type="button"
           onClick={onSend}
           disabled={loading || listening || !value.trim()}
-          className="inline-flex items-center gap-2 rounded-xl bg-green-600 px-5 text-white transition hover:bg-green-700 disabled:cursor-not-allowed disabled:bg-gray-400"
+          className="inline-flex h-11 shrink-0 items-center gap-2 rounded-xl bg-green-600 px-3 text-white transition hover:bg-green-700 disabled:cursor-not-allowed disabled:bg-gray-400 sm:h-auto sm:px-5"
         >
           {loading ? "..." : (
             <>

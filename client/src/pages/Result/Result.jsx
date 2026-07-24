@@ -190,7 +190,7 @@ const Result = () => {
   };
 
   return (
-    <section className="page-atmosphere relative min-h-screen overflow-hidden pb-16 pt-32">
+    <section className="page-atmosphere relative min-h-screen overflow-hidden pb-16 pt-28 sm:pt-32">
       <div className="pointer-events-none absolute -right-16 top-32 h-72 w-72 rounded-full bg-amber-100/50 blur-3xl" />
       <div className="pointer-events-none absolute -left-20 bottom-10 h-64 w-64 rounded-full bg-green-200/35 blur-3xl" />
 
@@ -294,14 +294,14 @@ const Result = () => {
               y: showReveal ? 28 : 0,
             }}
             transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
-            className="relative overflow-hidden rounded-[28px] border border-[#dce8dc] bg-white p-6 shadow-[0_16px_40px_rgba(15,40,20,0.06)] lg:col-span-5"
+            className="relative overflow-hidden rounded-[28px] border border-[#dce8dc] bg-white p-5 shadow-[0_16px_40px_rgba(15,40,20,0.06)] sm:p-6 lg:col-span-5"
           >
             <div className="pointer-events-none absolute -right-10 -top-10 h-36 w-36 rounded-full bg-green-100/70 blur-2xl" />
 
             <p className="font-[Manrope] text-sm font-semibold uppercase tracking-[0.2em] text-green-700">
               Diagnosis Result
             </p>
-            <h1 className="mt-3 font-[Manrope] text-3xl font-extrabold tracking-tight text-gray-900">
+            <h1 className="mt-3 font-[Manrope] text-2xl font-extrabold tracking-tight text-gray-900 sm:text-3xl">
               {result.disease}
             </h1>
             <p className="mt-2 text-gray-600">{result.crop}</p>
@@ -363,7 +363,7 @@ const Result = () => {
               duration: 0.55,
               ease: [0.22, 1, 0.36, 1],
             }}
-            className="rounded-[28px] border border-[#dce8dc] bg-white p-6 shadow-[0_16px_40px_rgba(15,40,20,0.06)] lg:col-span-7"
+            className="rounded-[28px] border border-[#dce8dc] bg-white p-5 shadow-[0_16px_40px_rgba(15,40,20,0.06)] sm:p-6 lg:col-span-7"
           >
             <div className="flex items-center gap-2">
               <div className="rounded-xl bg-green-700 p-2 text-white shadow-[0_8px_20px_rgba(46,125,50,0.35)]">

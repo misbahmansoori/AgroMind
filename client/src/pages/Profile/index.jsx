@@ -58,7 +58,7 @@ const Profile = () => {
   ];
 
   return (
-    <section className="page-atmosphere relative min-h-screen overflow-hidden pb-16 pt-32">
+    <section className="page-atmosphere relative min-h-screen overflow-hidden pb-16 pt-28 sm:pt-32">
       <div className="pointer-events-none absolute -right-16 top-28 h-64 w-64 rounded-full bg-green-200/30 blur-3xl" />
 
       <Container className="relative">

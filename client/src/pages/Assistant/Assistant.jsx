@@ -185,24 +185,24 @@ const Assistant = () => {
   };
 
   return (
-    <div className="mx-auto flex h-[90vh] max-w-5xl flex-col p-6 pt-32">
-      <div className="mb-5 flex items-start justify-between gap-4">
-        <div>
-          <h1 className="mb-2 font-[Manrope] text-3xl font-bold text-green-700">
+    <div className="mx-auto flex min-h-[100svh] w-full max-w-5xl flex-col px-4 pb-6 pt-28 sm:h-[90vh] sm:min-h-0 sm:p-6 sm:pt-32">
+      <div className="mb-4 flex flex-col gap-4 sm:mb-5 sm:flex-row sm:items-start sm:justify-between">
+        <div className="min-w-0">
+          <h1 className="mb-2 font-[Manrope] text-2xl font-bold text-green-700 sm:text-3xl">
             AI Farmer Assistant
           </h1>
-          <p className="text-gray-500">
+          <p className="text-sm text-gray-500 sm:text-base">
             Ask by voice or text — in English or Hindi. AgroMind can reply out
             loud.
           </p>
         </div>
 
-        <div className="flex shrink-0 flex-wrap items-center justify-end gap-2">
+        <div className="flex shrink-0 flex-wrap items-center gap-2 sm:justify-end">
           {ttsSupported && (
             <button
               type="button"
               onClick={toggleEnabled}
-              className={`inline-flex items-center gap-2 rounded-xl border px-4 py-2.5 text-sm font-medium transition ${
+              className={`inline-flex items-center gap-2 rounded-xl border px-3 py-2 text-sm font-medium transition sm:px-4 sm:py-2.5 ${
                 voiceRepliesOn
                   ? "border-green-200 bg-green-50 text-green-800 hover:bg-green-100"
                   : "border-gray-300 bg-white text-gray-600 hover:bg-gray-50"
@@ -214,7 +214,7 @@ const Assistant = () => {
               }
             >
               {voiceRepliesOn ? <Volume2 size={16} /> : <VolumeX size={16} />}
-              {voiceRepliesOn ? "Voice on" : "Voice off"}
+              <span className="sm:inline">{voiceRepliesOn ? "Voice on" : "Voice off"}</span>
             </button>
           )}
 
@@ -223,10 +223,11 @@ const Assistant = () => {
               type="button"
               onClick={clearChat}
               disabled={loading}
-              className="inline-flex items-center gap-2 rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 transition hover:border-red-200 hover:bg-red-50 hover:text-red-700 disabled:opacity-50"
+              className="inline-flex items-center gap-2 rounded-xl border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 transition hover:border-red-200 hover:bg-red-50 hover:text-red-700 disabled:opacity-50 sm:px-4 sm:py-2.5"
             >
               <Trash2 size={16} />
-              Clear chat
+              <span className="hidden xs:inline sm:inline">Clear chat</span>
+              <span className="sm:hidden">Clear</span>
             </button>
           )}
         </div>
