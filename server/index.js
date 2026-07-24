@@ -10,6 +10,7 @@ const connectDB = require("./config/db");
 const detectRoutes = require("./routes/detect");
 const authRoutes = require("./routes/auth.routes");
 const historyRoutes = require("./routes/history");
+const assistantRoutes = require("./routes/assistant");
 
 if (!process.env.JWT_SECRET) {
   console.error(
@@ -31,6 +32,7 @@ app.get("/", (req, res) => {
 app.use("/api/detect", detectRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/history", historyRoutes);
+app.use("/api/assistant", assistantRoutes);
 
 const PORT = process.env.PORT || 5000;
 

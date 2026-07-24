@@ -20,6 +20,7 @@ const Navbar = () => {
     "/result",
     "/profile",
     "/history",
+    "/assistant",
   ].includes(pathname);
 
   const handleLogout = () => {
@@ -78,7 +79,7 @@ const Navbar = () => {
       );
     }
 
-    // Logged-in app pages — no name in navbar
+    // Logged-in app pages
     if (isAuthenticated && isApp) {
       return (
         <div className="flex items-center gap-2 sm:gap-3">
@@ -145,41 +146,71 @@ const Navbar = () => {
               </h2>
             </Link>
 
-            {/* App links only when logged in (not on landing/auth) */}
-            {isAuthenticated && isApp && (
-              <div className="hidden items-center gap-6 text-sm font-medium text-gray-600 md:flex">
-                <Link
-                  to="/"
-                  className="transition-colors hover:text-green-700"
-                >
-                  Home
-                </Link>
-                <Link
-                  to="/dashboard"
-                  className={`transition-colors hover:text-green-700 ${
-                    isDashboard ? "text-green-700" : ""
-                  }`}
-                >
-                  Dashboard
-                </Link>
-                <Link
-                  to="/history"
-                  className={`transition-colors hover:text-green-700 ${
-                    pathname === "/history" ? "text-green-700" : ""
-                  }`}
-                >
-                  History
-                </Link>
-                <Link
-                  to="/detect"
-                  className={`transition-colors hover:text-green-700 ${
-                    pathname === "/detect" ? "text-green-700" : ""
-                  }`}
-                >
-                  Scan Crop
-                </Link>
-              </div>
-            )}
+            <div className="hidden items-center gap-6 text-sm font-medium text-gray-600 lg:flex lg:gap-8">
+              {isLanding ? (
+                <>
+                  <a
+                    href="#features"
+                    className="transition-colors hover:text-green-700"
+                  >
+                    Features
+                  </a>
+                  <a
+                    href="#how-it-works"
+                    className="transition-colors hover:text-green-700"
+                  >
+                    How it Works
+                  </a>
+                  <Link
+                    to="/dashboard"
+                    className="transition-colors hover:text-green-700"
+                  >
+                    Dashboard
+                  </Link>
+                </>
+              ) : (
+                <>
+                  <Link
+                    to="/dashboard"
+                    className={`transition-colors hover:text-green-700 ${
+                      isDashboard ? "text-green-700" : ""
+                    }`}
+                  >
+                    Dashboard
+                  </Link>
+                  <Link
+                    to="/detect"
+                    className={`transition-colors hover:text-green-700 ${
+                      pathname === "/detect" ? "text-green-700" : ""
+                    }`}
+                  >
+                    Scan Crop
+                  </Link>
+                  <Link
+                    to="/history"
+                    className={`transition-colors hover:text-green-700 ${
+                      pathname === "/history" ? "text-green-700" : ""
+                    }`}
+                  >
+                    History
+                  </Link>
+                  <Link
+                    to="/assistant"
+                    className={`transition-colors hover:text-green-700 ${
+                      pathname === "/assistant" ? "text-green-700" : ""
+                    }`}
+                  >
+                    Assistant
+                  </Link>
+                  <Link
+                    to="/"
+                    className="transition-colors hover:text-green-700"
+                  >
+                    Home
+                  </Link>
+                </>
+              )}
+            </div>
 
             {renderRight()}
           </div>

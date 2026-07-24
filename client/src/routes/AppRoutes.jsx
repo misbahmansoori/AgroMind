@@ -9,6 +9,7 @@ import Profile from "../pages/Profile";
 import Detect from "../pages/Detect/Detect";
 import Result from "../pages/Result/Result";
 import History from "../pages/History/History";
+import Assistant from "../pages/Assistant/Assistant";
 
 function withLayout(page) {
   return <MainLayout>{page}</MainLayout>;
@@ -22,25 +23,32 @@ function AppRoutes() {
 
       <Route
         path="/dashboard"
-        element={
-          <ProtectedRoute>{withLayout(<Dashboard />)}</ProtectedRoute>
-        }
+        element={<ProtectedRoute>{withLayout(<Dashboard />)}</ProtectedRoute>}
       />
+
       <Route
         path="/detect"
         element={<ProtectedRoute>{withLayout(<Detect />)}</ProtectedRoute>}
       />
+
       <Route
         path="/result"
         element={<ProtectedRoute>{withLayout(<Result />)}</ProtectedRoute>}
       />
+
       <Route
         path="/history"
         element={<ProtectedRoute>{withLayout(<History />)}</ProtectedRoute>}
       />
+
       <Route
         path="/profile"
         element={<ProtectedRoute>{withLayout(<Profile />)}</ProtectedRoute>}
+      />
+
+      <Route
+        path="/assistant"
+        element={<ProtectedRoute>{withLayout(<Assistant />)}</ProtectedRoute>}
       />
     </Routes>
   );
