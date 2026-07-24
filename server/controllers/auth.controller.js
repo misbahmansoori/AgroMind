@@ -1,6 +1,15 @@
 const User = require("../models/User");
 const jwt = require("jsonwebtoken");
 
+const signToken = (userId) =>
+  jwt.sign({ id: userId }, process.env.JWT_SECRET, { expiresIn: "7d" });
+
+const sanitizeUser = (user) => {
+  const obj = user.toObject ? user.toObject() : { ...user };
+  delete obj.password;
+  return obj;
+};
+
 // ======================
 // Register User
 // ======================
@@ -8,7 +17,13 @@ exports.registerUser = async (req, res) => {
   try {
     const { name, email, password, phone, state } = req.body;
 
-    // Check if user already exists
+    if (!name || !email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: "Name, email, and password are required",
+      });
+    }
+
     const userExists = await User.findOne({ email });
 
     if (userExists) {
@@ -18,36 +33,28 @@ exports.registerUser = async (req, res) => {
       });
     }
 
-    // Create new user
     const user = await User.create({
       name,
       email,
       password,
-      phone,
-      state,
+      phone: phone || "",
+      state: state || "",
     });
 
-    // Generate JWT Token
-    const token = jwt.sign(
-      { id: user._id },
-      process.env.JWT_SECRET,
-      { expiresIn: "7d" }
-    );
+    const token = signToken(user._id);
 
     res.status(201).json({
       success: true,
       message: "Registration Successful",
       token,
-      user,
+      user: sanitizeUser(user),
     });
-
   } catch (error) {
     console.error("REGISTER ERROR:", error);
 
     res.status(500).json({
       success: false,
       message: error.message,
-      stack: error.stack,
     });
   }
 };
@@ -59,7 +66,13 @@ exports.loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // Find user
+    if (!email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: "Email and password are required",
+      });
+    }
+
     const user = await User.findOne({ email });
 
     if (!user) {
@@ -69,7 +82,6 @@ exports.loginUser = async (req, res) => {
       });
     }
 
-    // Compare password
     const isMatch = await user.comparePassword(password);
 
     if (!isMatch) {
@@ -79,27 +91,30 @@ exports.loginUser = async (req, res) => {
       });
     }
 
-    // Generate JWT Token
-    const token = jwt.sign(
-      { id: user._id },
-      process.env.JWT_SECRET,
-      { expiresIn: "7d" }
-    );
+    const token = signToken(user._id);
 
     res.status(200).json({
       success: true,
       message: "Login Successful",
       token,
-      user,
+      user: sanitizeUser(user),
     });
-
   } catch (error) {
     console.error("LOGIN ERROR:", error);
 
     res.status(500).json({
       success: false,
       message: error.message,
-      stack: error.stack,
     });
   }
+};
+
+// ======================
+// Current User
+// ======================
+exports.getMe = async (req, res) => {
+  res.status(200).json({
+    success: true,
+    user: req.user,
+  });
 };

@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 
 import Container from "../common/Container";
 import Button from "../common/Button";
+import { useAuth } from "../../context/AuthContext";
 import heroImage from "../../assets/hero-image.png";
 
 const fadeUp = {
@@ -16,9 +17,10 @@ const fadeUp = {
 };
 
 const Hero = () => {
+  const { isAuthenticated } = useAuth();
+
   return (
     <section className="relative min-h-screen overflow-hidden">
-      {/* Full-bleed visual */}
       <motion.div
         initial={{ scale: 1.08 }}
         animate={{ scale: 1 }}
@@ -32,7 +34,6 @@ const Hero = () => {
         />
       </motion.div>
 
-      {/* Atmospheric read layer — keeps type legible without boxing the photo */}
       <div className="absolute inset-0 bg-gradient-to-r from-[#08140a]/88 via-[#0d1f10]/55 to-transparent" />
       <div className="absolute inset-0 bg-gradient-to-t from-[#08140a]/70 via-transparent to-[#08140a]/25" />
 
@@ -76,9 +77,9 @@ const Hero = () => {
             animate="visible"
             className="mt-10 flex flex-wrap items-center gap-4"
           >
-            <Link to="/detect">
+            <Link to={isAuthenticated ? "/detect" : "/auth?demo=1"}>
               <Button className="flex items-center gap-2 px-7 py-4">
-                Start Diagnosis
+                {isAuthenticated ? "Scan Crop" : "Try Demo"}
                 <ArrowRight size={18} />
               </Button>
             </Link>
