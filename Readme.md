@@ -1,160 +1,226 @@
-# 🌱 AgroMind
+# AgroMind
 
-> **AI-powered farming assistant that detects crop diseases, predicts risks, and provides personalized treatment — so farmers can act before the harvest is lost.**
+**AI-powered farming assistant for crop disease detection, treatment guidance, weather-aware risk insights, and multilingual farmer support.**
 
-**Team:** MindMesh · **Hackathon 2026**
+AgroMind helps farmers identify plant diseases from leaf images, understand the diagnosis, follow organic-first treatment plans, track scan history, and ask farming questions in English or Hindi - including voice input and spoken replies.
 
----
-
-## 🎯 Problem
-
-Farmers often lack timely access to agricultural experts. Crop diseases and pests go unnoticed until damage is severe.
-
-AgroMind helps farmers:
-
-- Detect crop diseases from images
-- Get organic & chemical treatment guidance
-- Track crop health history
-- Use AI assistance (Hindi / English planned)
-- Connect with nearby agri support (planned)
+**Live demo:** [https://agro-mind-ochre.vercel.app/](https://agro-mind-ochre.vercel.app/)
 
 ---
 
-## 🛠️ Tech Stack
+## Features
 
-| Layer | Stack |
-|--------|--------|
-| Frontend | React, Vite, Tailwind CSS, React Router, Framer Motion, Lucide, Axios |
-| Backend | Node.js, Express.js, Multer |
+### Core
+- **AI Disease Detection** — Upload a crop leaf image for Gemini Vision analysis (disease, confidence, severity)
+- **Crop Doctor Report** — Explanation, organic & chemical treatment, prevention, recovery time, and estimated cost
+- **PDF Report Download** — Export a structured diagnosis report
+- **Smart Farm Dashboard** — Health score, disease risk, live weather, recommendations, and scan timeline
+- **Crop Health History** — Per-user scan history with filters and delete
+- **Authentication** — JWT-based register/login with protected farm routes
+
+### Intelligence & Accessibility
+- **Live Weather Insights** — OpenWeather integration with GPS (profile location fallback) and farm-risk tips
+- **AI Farmer Assistant** — Short, practical Q&A focused on agriculture (same language as the question)
+- **Voice Mode** — Browser speech-to-text and text-to-speech for hands-free use
+- **Hindi / English UI** — Dashboard language toggle with translation of diagnosis content when needed
+
+---
+
+## Tech Stack
+
+| Layer | Technologies |
+|--------|----------------|
+| Frontend | React, Vite, Tailwind CSS, React Router, Framer Motion, Axios, jsPDF |
+| Backend | Node.js, Express, Multer, JWT, bcrypt |
 | Database | MongoDB Atlas, Mongoose |
-| AI | Google Gemini (`@google/genai`) |
-| Planned APIs | Weather API, Maps, Speech, PDF |
+| AI | Google Gemini (`@google/genai`) — vision + text |
+| External APIs | OpenWeatherMap |
+| Voice | Web Speech API (SpeechRecognition + speechSynthesis) |
 
 ---
 
-## 📂 Project Structure
+## Architecture
+
+```
+Browser (React / Vite)
+        │  REST + JWT
+        ▼
+Express API
+        ├── /api/auth        → User accounts
+        ├── /api/detect      → Image → Gemini Vision → DiseaseHistory
+        ├── /api/history     → User scan timeline
+        ├── /api/assistant   → Farming chatbot
+        ├── /api/weather     → Live weather + farm tips
+        └── /api/translate   → Hindi translation for diagnosis fields
+                │
+                ├── MongoDB Atlas
+                ├── Google Gemini
+                └── OpenWeatherMap
+```
+
+---
+
+## Project Structure
 
 ```
 AgroMind/
-├── client/                 # React frontend
+├── client/                      # Frontend application
 │   └── src/
-│       ├── components/
-│       ├── pages/          # Landing, Dashboard, Detect, Result, Profile, Auth
-│       ├── layouts/
-│       ├── routes/
-│       └── styles/
-├── server/                 # Express backend
-│   ├── config/             # MongoDB connection
-│   ├── models/             # User, DiseaseHistory, Report
-│   ├── routes/             # /api/detect
-│   ├── services/           # gemini.js
-│   └── index.js
-├── PROJECT_CONTEXT.md
-└── Readme.md
+│       ├── api/                 # Axios client (JWT + API base URL)
+│       ├── components/          # UI components (Navbar, cards, Assistant, etc.)
+│       ├── context/             # Auth & language providers
+│       ├── hooks/               # Speech recognition / synthesis
+│       ├── i18n/                # Dashboard EN/HI copy
+│       ├── layouts/             # Main layout (Navbar + Footer)
+│       ├── pages/               # Landing, Auth, Dashboard, Detect, Result, …
+│       ├── routes/              # App routing + protected routes
+│       ├── services/            # Weather / translate API helpers
+│       └── utils/               # Location, speech helpers
+│
+└── server/                      # Backend API
+    ├── config/                  # MongoDB connection
+    ├── controllers/             # Auth, weather, assistant, translate
+    ├── middleware/              # JWT protect
+    ├── models/                  # User, DiseaseHistory, Report
+    ├── routes/                  # API route modules
+    ├── services/                # Gemini vision + translation
+    └── index.js                 # Server entry
 ```
 
 ---
 
-## ✅ Done
+## Getting Started
 
-### Frontend UI
-- [x] Landing page (Hero, Features, Dashboard Preview, How It Works, CTA, Footer)
-- [x] Smart Farm Dashboard (Health, Weather, Risk, AI Recommendation, Timeline cards)
-- [x] Disease Detection page (upload + analyzing UI)
-- [x] Result / Crop Doctor page (diagnosis UI + reveal animation)
-- [x] Profile page (mock farmer data)
-- [x] Navbar / Footer / shared Button & Container
-- [x] Routing: `/`, `/dashboard`, `/detect`, `/result`, `/profile`, `/auth`
+### Prerequisites
+- Node.js 18+
+- MongoDB Atlas connection string (or local MongoDB)
+- Google Gemini API key
+- OpenWeatherMap API key
 
-### Backend & Database
-- [x] Express server + CORS + env setup
-- [x] MongoDB Atlas connection
-- [x] User model
-- [x] DiseaseHistory model (aligned with Crop Doctor fields)
-- [x] Report model
-- [x] `POST /api/detect` — image upload → Gemini → JSON diagnosis
-- [x] Multi-model Gemini fallback + demo fallback if quota fails
+### 1. Backend
 
-### Git
-- [x] GitHub repo + feature branches / PRs merged to `main`
-
----
-
-## 🚧 Remaining (must for demo)
-
-Priority order:
-
-1. [ ] **Wire Detect UI → `/api/detect`** (send image from browser)
-2. [ ] **Pass Gemini response → Result page** (replace mock data)
-3. [ ] **Auth** — register/login + JWT (teammate)
-4. [ ] **Protect routes** — dashboard / detect / result / profile
-5. [ ] **Save scan** to `DiseaseHistory` after diagnosis
-6. [ ] **Timeline** shows real history from DB
-7. [ ] **Deploy** frontend + backend + env vars
-8. [ ] **README demo steps** + **PPT** + backup demo video
-
----
-
-## ✨ Optional (if time — Day 24)
-
-- [ ] Live Weather API on dashboard
-- [ ] Crop Doctor **PDF** download → save `Report`
-- [ ] AI Farmer Assistant chatbot (text, Hindi/English)
-- [ ] Voice Farmer Mode (speech-to-text / text-to-speech)
-- [ ] Nearby KVK / experts / shops map
-- [ ] Disease prediction from weather + history
-- [ ] Irrigation / yield extras
-
-**Cut first if behind:** Voice, Nearby map, Yield prediction.
-
----
-
-## 🔀 Current Demo Flow
-
-```
-Landing → Dashboard → Detect → (API works in Postman/Hoppscotch)
-                              ↘ Result still uses mock until frontend wiring
-```
-
-**Backend detect is live.** Next coding step: connect Detect page to Gemini API, then show real data on Result.
-
----
-
-## ⚙️ Run locally
-
-### Server
 ```bash
 cd server
 npm install
-# add GEMINI_API_KEY and MONGO_URI in server/.env
-npm run dev
-# → http://localhost:5000
 ```
 
-### Client
+Create `server/.env`:
+
+```env
+PORT=5000
+MONGODB_URI=your_mongodb_connection_string
+JWT_SECRET=your_long_random_secret
+GEMINI_API_KEY=your_gemini_api_key
+WEATHER_API_KEY=your_openweather_api_key
+```
+
+Start the API:
+
+```bash
+npm run dev
+# or
+npm start
+```
+
+API base: `http://localhost:5000`
+
+### 2. Frontend
+
 ```bash
 cd client
 npm install
-npm run dev
-# → http://localhost:5173
 ```
 
-### Test AI detect (API)
-- **POST** `http://localhost:5000/api/detect`
-- Body: `multipart/form-data`
-- Field: `image` = crop photo file
+Optional `client/.env` (defaults to local API):
+
+```env
+VITE_API_URL=http://localhost:5000/api
+```
+
+Start the app:
+
+```bash
+npm run dev
+```
+
+App: `http://localhost:5173`
 
 ---
 
-## 👥 Team
+## Application Routes
 
-| Member | Role |
-|--------|------|
-| Misbah | Main developer — frontend, backend, AI, deploy, GitHub |
-| Monika | Database — MongoDB models, basic backend (`feature/database`) |
+| Path | Description |
+|------|-------------|
+| `/` | Landing page |
+| `/auth` | Login / register / demo access |
+| `/dashboard` | Farm overview (protected) |
+| `/detect` | Upload crop image (protected) |
+| `/result` | Crop Doctor diagnosis (protected) |
+| `/history` | Scan history (protected) |
+| `/assistant` | AI farmer chat + voice (protected) |
+| `/profile` | Farmer profile (protected) |
 
 ---
 
-## ❤️ Built for
+## API Overview
 
-Hackathon 2026 — *Empowering farmers with Artificial Intelligence.*
+| Method | Endpoint | Auth | Description |
+|--------|----------|------|-------------|
+| `POST` | `/api/auth/register` | No | Create account |
+| `POST` | `/api/auth/login` | No | Login, returns JWT |
+| `GET` | `/api/auth/me` | Yes | Current user |
+| `POST` | `/api/detect` | Yes | Upload `image` (multipart) → diagnosis |
+| `GET` | `/api/history` | Yes | List user scans |
+| `DELETE` | `/api/history/:id` | Yes | Delete a scan |
+| `POST` | `/api/assistant` | Soft | Farming assistant reply |
+| `GET` | `/api/weather` | Soft | Weather by `lat`/`lon` or `city` |
+| `POST` | `/api/translate` | Soft | Translate diagnosis fields to Hindi |
+
+Detect request field name: **`image`**
+
+---
+
+## User Flow
+
+```
+Landing → Auth → Detect (upload leaf)
+                → Result (Crop Doctor + PDF)
+                → Dashboard (health, weather, risk, timeline)
+                → History / Assistant / Profile
+```
+
+---
+
+## Deployment
+
+### Frontend (e.g. Vercel)
+- Root directory: `client`
+- Build command: `npm run build`
+- Output directory: `dist`
+- Environment variable:
+
+```env
+VITE_API_URL=https://YOUR-BACKEND-URL/api
+```
+
+`VITE_*` variables are applied at **build time** — redeploy after changing them.
+
+### Backend (e.g. Render)
+- Root directory: `server`
+- Start command: `npm start`
+- Set the same secrets as in `server/.env`
+- Ensure MongoDB Atlas network access allows your host (`0.0.0.0/0` for cloud demos)
+
+---
+
+## Notes
+
+- Gemini may hit free-tier quotas; the detect service includes multi-model fallback and a demo diagnosis path so the UI can still complete.
+- Weather uses browser geolocation when available; otherwise it falls back to the farmer profile location.
+- Voice features work best in Chromium-based browsers (Chrome / Edge) over HTTPS or localhost.
+
+---
+
+## License
+
+ISC
