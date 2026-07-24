@@ -7,6 +7,7 @@ import Auth from "../pages/Auth";
 import Profile from "../pages/Profile";
 import Detect from "../pages/Detect/Detect";
 import Result from "../pages/Result/Result";
+import History from "../pages/History/History";
 
 /*
   Auth flow (planned):
@@ -72,6 +73,8 @@ function AppRoutes() {
             </MainLayout>
           }
         />
+
+        <Route path="/history" element={<History />} />
       </Routes>
     
   );

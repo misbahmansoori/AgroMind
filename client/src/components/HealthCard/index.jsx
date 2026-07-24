@@ -2,11 +2,22 @@ import { useEffect, useState } from "react";
 import { Leaf } from "lucide-react";
 import { motion } from "framer-motion";
 
-const HealthCard = ({
-  score = 86,
-  status = "Good",
-  crop = "Tomato · Field A",
-}) => {
+const HealthCard = ({ report }) => {
+  const score = report
+  ? report.severity === "High"
+    ? 40
+    : report.severity === "Medium"
+    ? 70
+    : 95
+  : 86;
+
+const status = report ? report.severity : "Good";
+
+const crop = report ? report.cropName : "Tomato · Field A";
+
+const description = report
+  ? report.explanation
+  : "Leaves look stable. Continue weekly scans to stay ahead of fungal risk.";
   const ring = Math.min(100, Math.max(0, score));
   const [display, setDisplay] = useState(0);
   const circumference = 2 * Math.PI * 40;
@@ -27,6 +38,8 @@ const HealthCard = ({
     return () => cancelAnimationFrame(frame);
   }, [ring]);
 
+
+
   return (
     <article className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-[#dce8dc] bg-white p-5 shadow-[0_4px_20px_rgba(15,40,20,0.03)] transition-all duration-300 hover:-translate-y-1 hover:border-green-300 hover:shadow-[0_18px_40px_rgba(46,125,50,0.1)]">
       <div className="pointer-events-none absolute -right-8 -top-8 h-28 w-28 rounded-full bg-green-100/60 blur-2xl transition-opacity group-hover:opacity-100" />
@@ -41,7 +54,12 @@ const HealthCard = ({
 
       <div className="relative mt-6 flex flex-1 items-center gap-5">
         <div className="relative grid h-24 w-24 shrink-0 place-items-center">
-          <svg className="-rotate-90" width="96" height="96" viewBox="0 0 96 96">
+          <svg
+            className="-rotate-90"
+            width="96"
+            height="96"
+            viewBox="0 0 96 96"
+          >
             <circle
               cx="48"
               cy="48"
@@ -76,10 +94,7 @@ const HealthCard = ({
             Farm Health Score
           </p>
           <p className="mt-1 text-sm text-gray-500">{crop}</p>
-          <p className="mt-3 text-sm leading-6 text-gray-600">
-            Leaves look stable. Continue weekly scans to stay ahead of fungal
-            risk.
-          </p>
+          <p className="mt-3 text-sm leading-6 text-gray-600">{description}</p>
         </div>
       </div>
     </article>

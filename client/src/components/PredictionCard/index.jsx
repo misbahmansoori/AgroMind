@@ -1,11 +1,22 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 
-const PredictionCard = ({
-  risk = 18,
-  level = "Low",
-  label = "Disease Risk",
-}) => {
+const PredictionCard = ({ report }) => {
+  const label = "Disease Risk";
+
+  const risk = report
+    ? report.severity === "High"
+      ? 90
+      : report.severity === "Medium"
+        ? 60
+        : 20
+    : 18;
+
+  const level = report ? report.severity : "Low";
+
+  const description = report
+    ? `Latest AI diagnosis indicates ${report.severity.toLowerCase()} disease severity for ${report.cropName}.`
+    : "Based on humidity, rainfall, and recent field history.";
   const ring = Math.min(100, Math.max(0, risk));
   const [display, setDisplay] = useState(0);
   const circumference = 2 * Math.PI * 44;
@@ -47,7 +58,12 @@ const PredictionCard = ({
 
       <div className="mt-6 flex flex-1 flex-col items-center justify-center">
         <div className="relative grid h-28 w-28 place-items-center">
-          <svg className="-rotate-90" width="112" height="112" viewBox="0 0 112 112">
+          <svg
+            className="-rotate-90"
+            width="112"
+            height="112"
+            viewBox="0 0 112 112"
+          >
             <circle
               cx="56"
               cy="56"
@@ -81,7 +97,7 @@ const PredictionCard = ({
         </div>
 
         <p className="mt-5 max-w-[200px] text-center text-sm leading-6 text-gray-600">
-          Based on humidity, rainfall, and recent field history.
+          {description}
         </p>
       </div>
     </article>
