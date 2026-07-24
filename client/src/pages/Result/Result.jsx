@@ -8,9 +8,10 @@ import {
   Clock3,
   IndianRupee,
   Check,
+  Download,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-
+import jsPDF from "jspdf";
 import Container from "../../components/common/Container";
 import Button from "../../components/common/Button";
 
@@ -24,15 +25,17 @@ const sparks = [
 ];
 
 const Result = () => {
-  const [showReveal, setShowReveal] = useState(true);
   const location = useLocation();
+  const data = location.state;
+  const fromHistory = Boolean(data?._id);
+
+  const [showReveal, setShowReveal] = useState(!fromHistory);
 
   useEffect(() => {
+    if (fromHistory) return undefined;
     const timer = setTimeout(() => setShowReveal(false), 1400);
     return () => clearTimeout(timer);
-  }, []);
-
-  const data = location.state;
+  }, [fromHistory]);
 
   const result = {
     disease: data?.diseaseName,
@@ -48,12 +51,20 @@ const Result = () => {
   };
 
   if (!data) {
-  return (
-    <div className="min-h-screen flex items-center justify-center">
-      <p>No diagnosis found. Please scan a crop first.</p>
-    </div>
-  );
-}
+    return (
+      <section className="page-atmosphere flex min-h-screen flex-col items-center justify-center gap-4 pt-32">
+        <p className="text-gray-600">
+          No diagnosis found. Please scan a crop first.
+        </p>
+        <Link
+          to="/detect"
+          className="font-medium text-green-700 hover:underline"
+        >
+          Go to Detect
+        </Link>
+      </section>
+    );
+  }
 
   const treatments = [
     { label: "Organic Treatment", value: result.organic },
@@ -61,12 +72,77 @@ const Result = () => {
     { label: "Prevention", value: result.prevention },
   ];
 
+  const generatePDF = () => {
+    const doc = new jsPDF();
+
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(20);
+    doc.setTextColor(34, 139, 34);
+    doc.text("AgroMind", 105, 20, { align: "center" });
+
+    doc.setFontSize(14);
+    doc.setTextColor(0, 0, 0);
+    doc.text("AI Crop Disease Detection Report", 105, 30, {
+      align: "center",
+    });
+
+    doc.line(20, 36, 190, 36);
+
+    let y = 48;
+
+    const addField = (label, value) => {
+      doc.setFont("helvetica", "bold");
+      doc.text(`${label}:`, 20, y);
+      doc.setFont("helvetica", "normal");
+      const lines = doc.splitTextToSize(String(value || "N/A"), 110);
+      doc.text(lines, 70, y);
+      y += Math.max(10, lines.length * 6 + 4);
+    };
+
+    addField("Crop Name", result.crop);
+    addField("Disease", result.disease);
+    addField("Confidence", `${result.confidence ?? "N/A"}%`);
+    addField("Severity", result.severity);
+    addField("Recovery Time", result.recovery);
+    addField("Estimated Cost", result.cost);
+
+    y += 4;
+
+    const addBlock = (label, value) => {
+      if (y > 250) {
+        doc.addPage();
+        y = 20;
+      }
+      doc.setFont("helvetica", "bold");
+      doc.text(label, 20, y);
+      y += 8;
+      doc.setFont("helvetica", "normal");
+      const lines = doc.splitTextToSize(String(value || "N/A"), 170);
+      doc.text(lines, 20, y);
+      y += lines.length * 6 + 10;
+    };
+
+    addBlock("Explanation", result.explanation);
+    addBlock("Organic Treatment", result.organic);
+    addBlock("Chemical Treatment", result.chemical);
+    addBlock("Prevention", result.prevention);
+
+    doc.setFontSize(10);
+    doc.setTextColor(120);
+    doc.text(`Generated on: ${new Date().toLocaleString()}`, 20, 280);
+    doc.text("AgroMind - AI Powered Crop Disease Detection", 105, 288, {
+      align: "center",
+    });
+
+    const safeName = String(result.crop || "Crop").replace(/\s+/g, "_");
+    doc.save(`${safeName}_Report.pdf`);
+  };
+
   return (
     <section className="page-atmosphere relative min-h-screen overflow-hidden pb-16 pt-32">
       <div className="pointer-events-none absolute -right-16 top-32 h-72 w-72 rounded-full bg-amber-100/50 blur-3xl" />
       <div className="pointer-events-none absolute -left-20 bottom-10 h-64 w-64 rounded-full bg-green-200/35 blur-3xl" />
 
-      {/* Wow: Diagnosis complete reveal */}
       <AnimatePresence>
         {showReveal && (
           <motion.div
@@ -77,7 +153,6 @@ const Result = () => {
             transition={{ duration: 0.35 }}
           >
             <div className="relative flex flex-col items-center">
-              {/* Expanding rings */}
               {[0, 1, 2].map((i) => (
                 <motion.span
                   key={i}
@@ -96,7 +171,6 @@ const Result = () => {
                 />
               ))}
 
-              {/* Spark particles */}
               {sparks.map((spark, i) => (
                 <motion.span
                   key={i}
@@ -153,11 +227,11 @@ const Result = () => {
           transition={{ delay: showReveal ? 0 : 0.05 }}
         >
           <Link
-            to="/detect"
+            to={fromHistory ? "/history" : "/detect"}
             className="inline-flex items-center gap-2 text-sm font-medium text-gray-600 transition-colors hover:text-green-700"
           >
             <ArrowLeft size={16} />
-            Back to Detect
+            {fromHistory ? "Back to History" : "Back to Detect"}
           </Link>
         </motion.div>
 
@@ -295,15 +369,35 @@ const Result = () => {
               </div>
             </div>
 
-            <div className="mt-8 flex flex-wrap gap-3">
-              <Link to="/dashboard">
-                <Button>
+            <div className="mt-8 grid gap-3 sm:grid-cols-3">
+              <Button
+                type="button"
+                onClick={generatePDF}
+                className="w-full px-4 py-3.5"
+              >
+                <Download size={16} />
+                Download Report
+              </Button>
+
+              <Link to="/dashboard" className="block w-full">
+                <Button
+                  type="button"
+                  variant="secondary"
+                  className="w-full px-4 py-3.5"
+                >
                   <Leaf size={16} />
-                  Save to Timeline
+                  Go to Dashboard
                 </Button>
               </Link>
-              <Link to="/detect">
-                <Button variant="secondary">Scan Another Crop</Button>
+
+              <Link to="/detect" className="block w-full">
+                <Button
+                  type="button"
+                  variant="secondary"
+                  className="w-full px-4 py-3.5"
+                >
+                  Scan Another Crop
+                </Button>
               </Link>
             </div>
           </motion.div>

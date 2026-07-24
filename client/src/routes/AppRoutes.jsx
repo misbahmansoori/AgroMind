@@ -74,7 +74,14 @@ function AppRoutes() {
           }
         />
 
-        <Route path="/history" element={<History />} />
+        <Route
+          path="/history"
+          element={
+            <MainLayout>
+              <History />
+            </MainLayout>
+          }
+        />
       </Routes>
     </BrowserRouter>
   );
