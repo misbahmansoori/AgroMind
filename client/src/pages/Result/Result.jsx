@@ -75,64 +75,115 @@ const Result = () => {
   const generatePDF = () => {
     const doc = new jsPDF();
 
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(20);
-    doc.setTextColor(34, 139, 34);
-    doc.text("AgroMind", 105, 20, { align: "center" });
+    doc.setFillColor(34,139,34);
+    doc.rect(0,0,210,32,"F");
 
-    doc.setFontSize(14);
-    doc.setTextColor(0, 0, 0);
-    doc.text("AI Crop Disease Detection Report", 105, 30, {
-      align: "center",
-    });
+    doc.setFont("helvetica","bold");
+    doc.setFontSize(22);
+    doc.setTextColor(255,255,255);
+    doc.text("AgroMind",105,15,{align:"center"});
 
-    doc.line(20, 36, 190, 36);
+    doc.setFontSize(11);
+    doc.text("AI Crop Disease Detection Report",105,24,{align:"center"});
 
-    let y = 48;
+    doc.setTextColor(120);
+    doc.setFontSize(10);
+    doc.text(`Generated: ${new Date().toLocaleString()}`,20,40);
+
+    let y = 50;
 
     const addField = (label, value) => {
-      doc.setFont("helvetica", "bold");
-      doc.text(`${label}:`, 20, y);
-      doc.setFont("helvetica", "normal");
-      const lines = doc.splitTextToSize(String(value || "N/A"), 110);
-      doc.text(lines, 70, y);
-      y += Math.max(10, lines.length * 6 + 4);
+  
+      doc.setFillColor(235,248,236);
+      doc.roundedRect(15,y,180,35,4,4,"F");
+
+      doc.setFont("helvetica","bold");
+      doc.setFontSize(18);
+      doc.setTextColor(34,139,34);
+      doc.text(result.disease || "Unknown Disease",20,y+12);
+
+      doc.setFontSize(12);
+      doc.setTextColor(0);
+
+      doc.text(`Crop : ${result.crop}`,20,y+22);
+      doc.text(`Confidence : ${result.confidence}%`,120,y+12);
+      doc.text(`Severity : ${result.severity}`,120,y+22);
+
+      y += 45;
     };
 
-    addField("Crop Name", result.crop);
-    addField("Disease", result.disease);
-    addField("Confidence", `${result.confidence ?? "N/A"}%`);
-    addField("Severity", result.severity);
-    addField("Recovery Time", result.recovery);
-    addField("Estimated Cost", result.cost);
+    doc.setFillColor(248,249,250);
+    doc.roundedRect(15,y,180,28,4,4,"F");
 
-    y += 4;
+    doc.setFont("helvetica","bold");
+    doc.setFontSize(12);
 
-    const addBlock = (label, value) => {
+    doc.text("Recovery Time",25,y+10);
+    doc.text("Estimated Cost",110,y+10);
+
+    doc.setFont("helvetica","normal");
+
+    doc.text(result.recovery || "N/A",25,y+20);
+    doc.text(result.cost || "N/A",110,y+20);
+
+    y += 40;
+
+    const addSection = (title, content, color) => {
+
       if (y > 250) {
-        doc.addPage();
-        y = 20;
+      doc.addPage();
+      y = 20;
       }
-      doc.setFont("helvetica", "bold");
-      doc.text(label, 20, y);
-      y += 8;
-      doc.setFont("helvetica", "normal");
-      const lines = doc.splitTextToSize(String(value || "N/A"), 170);
-      doc.text(lines, 20, y);
-      y += lines.length * 6 + 10;
-    };
 
-    addBlock("Explanation", result.explanation);
-    addBlock("Organic Treatment", result.organic);
-    addBlock("Chemical Treatment", result.chemical);
-    addBlock("Prevention", result.prevention);
+    doc.setFillColor(...color);
+    doc.roundedRect(15, y, 180, 12, 3, 3, "F");
 
-    doc.setFontSize(10);
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(13);
+    doc.setTextColor(255);
+
+    doc.text(title, 20, y + 8);
+
+    y += 18;
+
+    doc.setFont("helvetica", "normal");
+    doc.setTextColor(0);
+
+    const lines = doc.splitTextToSize(content || "N/A", 170);
+
+    doc.text(lines, 20, y);
+
+    y += lines.length * 6 + 10;
+
+   };
+
+    
+   addSection("Explanation", result.explanation, [41,128,185]);
+
+   addSection("Organic Treatment", result.organic, [46,204,113]);
+
+   addSection("Chemical Treatment", result.chemical, [230,126,34]);
+
+   addSection("Prevention", result.prevention, [52,152,219]);
+
+    doc.line(15,280,195,280);
+
+    doc.setFontSize(9);
     doc.setTextColor(120);
-    doc.text(`Generated on: ${new Date().toLocaleString()}`, 20, 280);
-    doc.text("AgroMind - AI Powered Crop Disease Detection", 105, 288, {
-      align: "center",
-    });
+
+    doc.text(
+    "Disclaimer: This report is AI-generated and should be used for guidance only.",
+    20,
+    287
+    );
+
+    doc.text(
+    "Please consult an agricultural expert before applying treatments.",
+    20,
+    293
+    );
+
+    doc.text("AgroMind © 2026",165,293);
 
     const safeName = String(result.crop || "Crop").replace(/\s+/g, "_");
     doc.save(`${safeName}_Report.pdf`);
